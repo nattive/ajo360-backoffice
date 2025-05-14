@@ -15,10 +15,10 @@ export default function Otp() {
     <AuthLayout>
       <Card className='gap-4'>
         <CardHeader>
-          <CardTitle className='text-base tracking-tight'>
+          <CardTitle className='text-base tracking-tight text-center'>
             Two-factor Authentication
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-center">
             Please enter the authentication code. <br /> We have sent the
             authentication code to your email.
           </CardDescription>

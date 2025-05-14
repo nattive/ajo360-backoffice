@@ -1,7 +1,8 @@
 import Cookies from 'js-cookie'
 import { create } from 'zustand'
 
-const ACCESS_TOKEN = 'thisisjustarandomstring'
+export const ACCESS_TOKEN = 'access_token'
+export const REFRESH_TOKEN = 'refresh_token'
 
 interface AuthUser {
   accountNo: string
@@ -15,7 +16,9 @@ interface AuthState {
     user: AuthUser | null
     setUser: (user: AuthUser | null) => void
     accessToken: string
+    refreshToken: string
     setAccessToken: (accessToken: string) => void
+    setRefreshToken: (refreshToken: string) => void
     resetAccessToken: () => void
     reset: () => void
   }
@@ -23,17 +26,27 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()((set) => {
   const cookieState = Cookies.get(ACCESS_TOKEN)
-  const initToken = cookieState ? JSON.parse(cookieState) : ''
+  const refreshToken = Cookies.get(REFRESH_TOKEN)
+
+  const initToken = cookieState ? cookieState : ''
+  const initRefreshToken = refreshToken ? JSON.parse(refreshToken) : ''
+
   return {
     auth: {
       user: null,
       setUser: (user) =>
         set((state) => ({ ...state, auth: { ...state.auth, user } })),
       accessToken: initToken,
+      refreshToken: initRefreshToken,
       setAccessToken: (accessToken) =>
         set((state) => {
-          Cookies.set(ACCESS_TOKEN, JSON.stringify(accessToken))
+          Cookies.set(ACCESS_TOKEN, accessToken)
           return { ...state, auth: { ...state.auth, accessToken } }
+        }),
+      setRefreshToken: (refreshToken) =>
+        set((state) => {
+          Cookies.set(REFRESH_TOKEN, JSON.stringify(refreshToken))
+          return { ...state, auth: { ...state.auth, refreshToken } }
         }),
       resetAccessToken: () =>
         set((state) => {
@@ -43,13 +56,20 @@ export const useAuthStore = create<AuthState>()((set) => {
       reset: () =>
         set((state) => {
           Cookies.remove(ACCESS_TOKEN)
+          Cookies.remove(REFRESH_TOKEN)
           return {
             ...state,
-            auth: { ...state.auth, user: null, accessToken: '' },
+            auth: {
+              ...state.auth,
+              user: null,
+              accessToken: '',
+              refreshToken: '',
+            },
           }
         }),
     },
   }
 })
 
-// export const useAuth = () => useAuthStore((state) => state.auth)
+export const useAuth = () => useAuthStore((state) => state.auth)
+export const getAuth = () => useAuthStore.getState().auth

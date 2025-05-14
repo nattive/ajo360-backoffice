@@ -61,7 +61,7 @@ export function ForgotPasswordForm({ className, ...props }: ForgotFormProps) {
             </FormItem>
           )}
         />
-        <Button className='mt-2' disabled={isLoading}>
+        <Button className='mt-2 bg-blue-700 hover:bg-blue-900' disabled={isLoading}>
           Continue
         </Button>
       </form>

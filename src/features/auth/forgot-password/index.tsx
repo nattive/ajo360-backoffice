@@ -15,12 +15,11 @@ export default function ForgotPassword() {
     <AuthLayout>
       <Card className='gap-4'>
         <CardHeader>
-          <CardTitle className='text-lg tracking-tight'>
+          <CardTitle className='text-lg tracking-tight text-center'>
             Forgot Password
           </CardTitle>
-          <CardDescription>
-            Enter your registered email and <br /> we will send you a link to
-            reset your password.
+          <CardDescription className="text-center">
+            Enter your registered email.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -28,7 +27,7 @@ export default function ForgotPassword() {
         </CardContent>
         <CardFooter>
           <p className='text-muted-foreground px-8 text-center text-sm'>
-            Don't have an account?{' '}
+            Don't have an account?
             <Link
               to='/sign-up'
               className='hover:text-primary underline underline-offset-4'

@@ -6,17 +6,17 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
+  // DropdownMenuRadioGroup,
+  // DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
+  // DropdownMenuSub,
+  // DropdownMenuSubContent,
+  // DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useTasks } from '../context/tasks-context'
-import { labels } from '../data/data'
+// import { labels } from '../data/data'
 import { taskSchema } from '../data/schema'
 
 interface DataTableRowActionsProps<TData> {
@@ -43,28 +43,18 @@ export function DataTableRowActions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-[160px]'>
         <DropdownMenuItem
+        
+        >
+          View Transactions
+        </DropdownMenuItem>
+        <DropdownMenuItem
           onClick={() => {
             setCurrentRow(task)
             setOpen('update')
           }}
         >
-          Edit
+          Credit User
         </DropdownMenuItem>
-        <DropdownMenuItem disabled>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem disabled>Favorite</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.label}>
-              {labels.map((label) => (
-                <DropdownMenuRadioItem key={label.value} value={label.value}>
-                  {label.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
@@ -72,9 +62,27 @@ export function DataTableRowActions<TData>({
             setOpen('delete')
           }}
         >
+          Suspend User
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            setCurrentRow(task)
+            setOpen('delete')
+          }}
+        >
+          Put on PND
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          className="bg-red-500 text-white"
+          onClick={() => {
+            setCurrentRow(task)
+            setOpen('delete')
+          }}
+        >
           Delete
           <DropdownMenuShortcut>
-            <IconTrash size={16} />
+            <IconTrash size={16} color='white'/>
           </DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>

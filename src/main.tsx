@@ -1,21 +1,24 @@
-import { StrictMode } from 'react'
-import ReactDOM from 'react-dom/client'
-import { AxiosError } from 'axios'
-import {
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
-import { RouterProvider, createRouter } from '@tanstack/react-router'
-import { toast } from 'sonner'
-import { useAuthStore } from '@/stores/authStore'
-import { handleServerError } from '@/utils/handle-server-error'
-import { FontProvider } from './context/font-context'
-import { ThemeProvider } from './context/theme-context'
-import './index.css'
+import { StrictMode } from 'react';
+import ReactDOM from 'react-dom/client';
+import { AxiosError } from 'axios';
+import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RouterProvider, createRouter } from '@tanstack/react-router';
+import { toast } from 'sonner';
+import { useAuthStore } from '@/stores/authStore';
+import { handleServerError } from '@/utils/handle-server-error';
+import { FontProvider } from './context/font-context';
+import { ThemeProvider } from './context/theme-context';
+import './index.css';
 // Generated Routes
-import { routeTree } from './routeTree.gen'
+import { routeTree } from './routeTree.gen';
 
+
+/**
+ * handles data fetching/caching
+ * prevents retries for certain errors (401, 403, 500)
+ * mutation onError: show a toast if muttion fails
+ * QueryCache onError: Handles global fetch errors (401 = session expired, 500 = server error, etc.).
+ */
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

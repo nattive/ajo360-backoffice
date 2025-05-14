@@ -16,8 +16,23 @@ export function handleServerError(error: unknown) {
     errMsg = 'Content not found.'
   }
 
+  // Axios errors
   if (error instanceof AxiosError) {
-    errMsg = error.response?.data.title
+    const message  = error.response?.data.title
+    const status = error.response?.data.status
+    const title = error.response?.data.title
+
+
+    //   Network error
+    if (error.message === 'Network Error' && !error.message) {
+      errMsg = "No Internet connection. Please check your network."
+    } else if(title) {
+      errMsg = title
+    } else if (message) {
+      errMsg = message
+    } else if (status) {
+      errMsg = `Request failed with status ${status}`
+    }
   }
 
   toast.error(errMsg)

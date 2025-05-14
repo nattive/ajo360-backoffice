@@ -1,19 +1,23 @@
 import * as React from 'react'
-import { ChevronsUpDown, Plus } from 'lucide-react'
+import { 
+  //  ChevronsUpDown, 
+  //  Plus 
+} 
+from 'lucide-react'
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
+  // DropdownMenuContent,
+  // DropdownMenuItem,
+  // DropdownMenuLabel,
+  // DropdownMenuSeparator,
+  // DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
+  // useSidebar,
 } from '@/components/ui/sidebar'
 
 export function TeamSwitcher({
@@ -25,8 +29,8 @@ export function TeamSwitcher({
     plan: string
   }[]
 }) {
-  const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(teams[0])
+  // const { isMobile } = useSidebar()
+  const [activeTeam, _setActiveTeam] = React.useState(teams[0])
 
   return (
     <SidebarMenu>
@@ -42,14 +46,14 @@ export function TeamSwitcher({
               </div>
               <div className='grid flex-1 text-left text-sm leading-tight'>
                 <span className='truncate font-semibold'>
-                  {activeTeam.name}
+                  {activeTeam?.name}
                 </span>
                 <span className='truncate text-xs'>{activeTeam.plan}</span>
               </div>
-              <ChevronsUpDown className='ml-auto' />
+              {/* <ChevronsUpDown className='ml-auto' /> */}
             </SidebarMenuButton>
           </DropdownMenuTrigger>
-          <DropdownMenuContent
+          {/* <DropdownMenuContent
             className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
             align='start'
             side={isMobile ? 'bottom' : 'right'}
@@ -78,7 +82,7 @@ export function TeamSwitcher({
               </div>
               <div className='text-muted-foreground font-medium'>Add team</div>
             </DropdownMenuItem>
-          </DropdownMenuContent>
+          </DropdownMenuContent> */}
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>

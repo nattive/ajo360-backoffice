@@ -1,10 +1,11 @@
-import { ColumnDef } from '@tanstack/react-table'
-import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
-import { labels, priorities, statuses } from '../data/data'
-import { Task } from '../data/schema'
-import { DataTableColumnHeader } from './data-table-column-header'
-import { DataTableRowActions } from './data-table-row-actions'
+import { ColumnDef } from '@tanstack/react-table';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { labels, priorities, statuses } from '../data/data';
+import { Task } from '../data/schema';
+import { DataTableColumnHeader } from './data-table-column-header';
+import { DataTableRowActions } from './data-table-row-actions';
+
 
 export const columns: ColumnDef<Task>[] = [
   {
@@ -31,15 +32,15 @@ export const columns: ColumnDef<Task>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  {
-    accessorKey: 'id',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Task' />
-    ),
-    cell: ({ row }) => <div className='w-[80px]'>{row.getValue('id')}</div>,
-    enableSorting: false,
-    enableHiding: false,
-  },
+  // {
+  //   accessorKey: 'id',
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title='Task' />
+  //   ),
+  //   cell: ({ row }) => <div className='w-[80px]'>{row.getValue('id')}</div>,
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
   {
     accessorKey: 'title',
     header: ({ column }) => (
@@ -50,7 +51,7 @@ export const columns: ColumnDef<Task>[] = [
 
       return (
         <div className='flex space-x-2'>
-          {label && <Badge variant='outline'>{label.label}</Badge>}
+          {label && <Badge variant='secondary'>{label.label}</Badge>}
           <span className='max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]'>
             {row.getValue('title')}
           </span>

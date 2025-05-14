@@ -1,20 +1,22 @@
-import { Link } from '@tanstack/react-router'
+// import { Link } from '@tanstack/react-router'
 import {
-  BadgeCheck,
-  Bell,
+  // BadgeCheck,
+  // Bell,
   ChevronsUpDown,
-  CreditCard,
   LogOut,
-  Sparkles,
+  // CreditCard,
+  // LogOut,
+  // Sparkles,
 } from 'lucide-react'
+import { useLogout } from '@/hooks/api-hooks/useAuth'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
+  // DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
+  // DropdownMenuLabel,
+  // DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
@@ -34,6 +36,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const { mutate: logout, isPending: logoutPending } = useLogout()
 
   return (
     <SidebarMenu>
@@ -61,7 +64,7 @@ export function NavUser({
             align='end'
             sideOffset={4}
           >
-            <DropdownMenuLabel className='p-0 font-normal'>
+            {/* <DropdownMenuLabel className='p-0 font-normal'>
               <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                 <Avatar className='h-8 w-8 rounded-lg'>
                   <AvatarImage src={user.avatar} alt={user.name} />
@@ -72,16 +75,16 @@ export function NavUser({
                   <span className='truncate text-xs'>{user.email}</span>
                 </div>
               </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
+            </DropdownMenuLabel> */}
+            {/* <DropdownMenuSeparator /> */}
+            {/* <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Sparkles />
                 Upgrade to Pro
               </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
+            </DropdownMenuGroup> */}
+            {/* <DropdownMenuSeparator /> */}
+            {/* <DropdownMenuGroup>
               <DropdownMenuItem asChild>
                 <Link to='/settings/account'>
                   <BadgeCheck />
@@ -101,8 +104,8 @@ export function NavUser({
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuSeparator /> */}
+            <DropdownMenuItem onClick={() => logout()} disabled={logoutPending}>
               <LogOut />
               Log out
             </DropdownMenuItem>

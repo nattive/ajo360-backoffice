@@ -24,9 +24,11 @@ import { Route as authSignInImport } from './routes/(auth)/sign-in'
 import { Route as authOtpImport } from './routes/(auth)/otp'
 import { Route as authForgotPasswordImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings/route'
+import { Route as AuthenticatedWalletIndexImport } from './routes/_authenticated/wallet/index'
 import { Route as AuthenticatedUsersIndexImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTasksIndexImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedSavingsIndexImport } from './routes/_authenticated/savings/index'
 import { Route as AuthenticatedHelpCenterIndexImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedChatsIndexImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedAppsIndexImport } from './routes/_authenticated/apps/index'
@@ -116,6 +118,12 @@ const AuthenticatedSettingsRouteRoute = AuthenticatedSettingsRouteImport.update(
   } as any,
 )
 
+const AuthenticatedWalletIndexRoute = AuthenticatedWalletIndexImport.update({
+  id: '/wallet/',
+  path: '/wallet/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+
 const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexImport.update({
   id: '/users/',
   path: '/users/',
@@ -135,6 +143,12 @@ const AuthenticatedSettingsIndexRoute = AuthenticatedSettingsIndexImport.update(
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any,
 )
+
+const AuthenticatedSavingsIndexRoute = AuthenticatedSavingsIndexImport.update({
+  id: '/savings/',
+  path: '/savings/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 const AuthenticatedHelpCenterIndexRoute =
   AuthenticatedHelpCenterIndexImport.update({
@@ -327,6 +341,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHelpCenterIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/savings/': {
+      id: '/_authenticated/savings/'
+      path: '/savings'
+      fullPath: '/savings'
+      preLoaderRoute: typeof AuthenticatedSavingsIndexImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/settings/': {
       id: '/_authenticated/settings/'
       path: '/'
@@ -346,6 +367,13 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/users'
       preLoaderRoute: typeof AuthenticatedUsersIndexImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/wallet/': {
+      id: '/_authenticated/wallet/'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof AuthenticatedWalletIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
   }
@@ -382,8 +410,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
+  AuthenticatedSavingsIndexRoute: typeof AuthenticatedSavingsIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
+  AuthenticatedWalletIndexRoute: typeof AuthenticatedWalletIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -392,8 +422,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
+  AuthenticatedSavingsIndexRoute: AuthenticatedSavingsIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
+  AuthenticatedWalletIndexRoute: AuthenticatedWalletIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -420,9 +452,11 @@ export interface FileRoutesByFullPath {
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
+  '/savings': typeof AuthenticatedSavingsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/wallet': typeof AuthenticatedWalletIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -444,9 +478,11 @@ export interface FileRoutesByTo {
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
+  '/savings': typeof AuthenticatedSavingsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/wallet': typeof AuthenticatedWalletIndexRoute
 }
 
 export interface FileRoutesById {
@@ -471,9 +507,11 @@ export interface FileRoutesById {
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
+  '/_authenticated/savings/': typeof AuthenticatedSavingsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/wallet/': typeof AuthenticatedWalletIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -499,9 +537,11 @@ export interface FileRouteTypes {
     | '/apps'
     | '/chats'
     | '/help-center'
+    | '/savings'
     | '/settings/'
     | '/tasks'
     | '/users'
+    | '/wallet'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -522,9 +562,11 @@ export interface FileRouteTypes {
     | '/apps'
     | '/chats'
     | '/help-center'
+    | '/savings'
     | '/settings'
     | '/tasks'
     | '/users'
+    | '/wallet'
   id:
     | '__root__'
     | '/_authenticated'
@@ -547,9 +589,11 @@ export interface FileRouteTypes {
     | '/_authenticated/apps/'
     | '/_authenticated/chats/'
     | '/_authenticated/help-center/'
+    | '/_authenticated/savings/'
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
+    | '/_authenticated/wallet/'
   fileRoutesById: FileRoutesById
 }
 
@@ -612,8 +656,10 @@ export const routeTree = rootRoute
         "/_authenticated/apps/",
         "/_authenticated/chats/",
         "/_authenticated/help-center/",
+        "/_authenticated/savings/",
         "/_authenticated/tasks/",
-        "/_authenticated/users/"
+        "/_authenticated/users/",
+        "/_authenticated/wallet/"
       ]
     },
     "/_authenticated/settings": {
@@ -689,6 +735,10 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/help-center/index.tsx",
       "parent": "/_authenticated"
     },
+    "/_authenticated/savings/": {
+      "filePath": "_authenticated/savings/index.tsx",
+      "parent": "/_authenticated"
+    },
     "/_authenticated/settings/": {
       "filePath": "_authenticated/settings/index.tsx",
       "parent": "/_authenticated/settings"
@@ -699,6 +749,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/users/": {
       "filePath": "_authenticated/users/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/wallet/": {
+      "filePath": "_authenticated/wallet/index.tsx",
       "parent": "/_authenticated"
     }
   }

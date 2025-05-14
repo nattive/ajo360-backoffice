@@ -87,7 +87,7 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
             </FormItem>
           )}
         />
-        <Button className='mt-2' disabled={otp.length < 6 || isLoading}>
+        <Button className='mt-2 bg-blue-700 hover:bg-blue-900' disabled={otp.length < 6 || isLoading}>
           Verify
         </Button>
       </form>
