@@ -1,3 +1,5 @@
+import { Loader2 } from 'lucide-react'
+import { useGetUsers } from '@/hooks/api-hooks/useAuth'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -8,12 +10,17 @@ import { UsersDialogs } from './components/users-dialogs'
 import { UsersPrimaryButtons } from './components/users-primary-buttons'
 import { UsersTable } from './components/users-table'
 import UsersProvider from './context/users-context'
-import { userListSchema } from './data/schema'
-import { users } from './data/users'
 
 export default function Users() {
-  // Parse user list
-  const userList = userListSchema.parse(users)
+  const { data: users, isLoading } = useGetUsers()
+
+  if (isLoading) {
+    return (
+      <div className='flex h-screen items-center justify-center'>
+        <Loader2 className='h-6 w-6 animate-spin' />
+      </div>
+    )
+  }
 
   return (
     <UsersProvider>
@@ -36,7 +43,7 @@ export default function Users() {
           <UsersPrimaryButtons />
         </div>
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-          <UsersTable data={userList} columns={columns} />
+          <UsersTable data={users ?? []} columns={columns} />
         </div>
       </Main>
 

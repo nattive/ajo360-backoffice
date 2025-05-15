@@ -18,3 +18,14 @@ export const logoutUser = async () => {
   const response = await axi.delete('/auth/logout')
   return response.data
 }
+
+// ======================= USER ===============================
+export const getUsers = async () => {
+  const response = await axi.get('/user')
+  return response.data
+}
+
+export const getUserById = async (id: string) => {
+  const response = await axi.get(`/user/${id}`)
+  return response.data
+}

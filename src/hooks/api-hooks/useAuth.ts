@@ -1,10 +1,16 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import {
   LoginFormSchemaType,
   RegisterFormSchemaType,
 } from '@/schemas/authSchemas.ts'
-import { loginUser, logoutUser, registerUser } from '@/api/auth'
+import {
+  getUserById,
+  getUsers,
+  loginUser,
+  logoutUser,
+  registerUser,
+} from '@/api/auth'
 import { useAuth } from '@/stores/authStore'
 
 export const useRegister = () => {
@@ -56,5 +62,31 @@ export const useLogout = () => {
       reset()
       router.navigate({ to: '/sign-in' })
     },
+  })
+}
+
+// ========================= USERS =======================
+
+export const useGetUsers = () => {
+  return useQuery({
+    queryKey: ['allUsers'],
+    queryFn: async () => {
+      const data = await getUsers()
+      return data ?? []
+    },
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
+export const useGetUserById = (id: string) => {
+  return useQuery({
+    queryKey: ['allUsers', 'users', id],
+    queryFn: async ({ queryKey }) => {
+      const [_group, _resource, userId] = queryKey
+      if (!userId) return null
+      const data = await getUserById(userId)
+      return data
+    },
+    enabled: !!id,
   })
 }

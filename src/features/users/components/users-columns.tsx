@@ -3,10 +3,10 @@ import { ColumnDef } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import LongText from '@/components/long-text'
 import { User } from '../data/schema'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
+import { EmailCell } from './email-cell'
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -52,9 +52,7 @@ export const columns: ColumnDef<User>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Email' />
     ),
-    cell: ({ row }) => (
-      <LongText className='max-w-48'>{row.getValue('email')}</LongText>
-    ),
+    cell: ({ row }) => <EmailCell user={row.original} />,
   },
   {
     accessorKey: 'phoneNumber',
