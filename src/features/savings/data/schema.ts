@@ -1,38 +1,34 @@
 import { z } from 'zod'
 
-export const userSchema = z.object({
+export const savingsPlanConfigSchema = z.object({
   id: z.string(),
-  firstName: z.string(),
-  lastName: z.string(),
-  otherName: z.string().nullable(),
-  email: z.string().email(),
-  phoneNumber: z.string(),
-  password: z.string(),
-  bvn: z.string().nullable(),
-  dateOfBirth: z.string(),
-  profilePicture: z.string().url().nullable(),
-  deviceId: z.string().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-  emailVerified: z.boolean(),
-  phoneNumberVerified: z.boolean(),
-  address: z.string(),
-  state: z.string(),
-  country: z.string(),
+  interest_rate: z.string(), // e.g., "10.00"
+  minimum_days: z.number(),
+  maximum_days: z.number(),
+  interest_style: z.enum(['simple', 'compound']),
+  allow_break: z.boolean(),
+  minimum_percentage_amount: z.number(),
+  user_can_auto_save: z.boolean(),
+  break_penalty: z.string(),
+  allow_interest_withdrawal: z.boolean(),
+  use_main_wallet_balance: z.boolean(),
+  is_group_savings: z.boolean(),
+  keep_interest_on_break: z.boolean(),
+  keep_interest_record: z.boolean(),
 })
 
-export const savingsSchema = z.object({
+export const savingsPlanSchema = z.object({
   id: z.string(),
-  savingsAccountNumber: z.string(),
-  savingsAccountName: z.string(),
-  targetAmount: z.string(),
-  balance: z.string(),
-  frequency: z.enum(['DAILY', 'WEEKLY', 'MONTHLY']),
-  nextWithdrawalDate: z.string(),
-  status: z.enum(['ACTIVE', 'PENDING', 'FAILED', 'CLOSED']),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-  user: userSchema,
+  name: z.string(),
+  slug: z.string(),
+  icon: z.string().nullable(),
+  color: z.string(),
+  bgColor: z.string(),
+  description: z.string(),
+  is_visible: z.boolean(),
+  is_enabled: z.boolean(),
+  config_id: z.string(),
+  config: savingsPlanConfigSchema,
 })
 
-export type Savings = z.infer<typeof savingsSchema>
+export type SavingsPlan = z.infer<typeof savingsPlanSchema>

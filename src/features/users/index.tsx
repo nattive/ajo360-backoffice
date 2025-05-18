@@ -46,7 +46,6 @@ export default function Users() {
           <UsersTable data={users ?? []} columns={columns} />
         </div>
       </Main>
-
       <UsersDialogs />
     </UsersProvider>
   )

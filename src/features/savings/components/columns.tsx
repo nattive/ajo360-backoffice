@@ -1,13 +1,11 @@
-import { ColumnDef } from '@tanstack/react-table';
-import { formatDateTime } from '@/utils/globals';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Savings } from '../data/schema';
-import { DataTableColumnHeader } from './data-table-column-header';
-import { DataTableRowActions } from './data-table-row-actions';
+import { ColumnDef } from '@tanstack/react-table'
+import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
+import { SavingsPlan } from '../data/schema'
+import { DataTableColumnHeader } from './data-table-column-header'
+import { DataTableRowActions } from './data-table-row-actions'
 
-
-export const columns: ColumnDef<Savings>[] = [
+export const columns: ColumnDef<SavingsPlan>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -33,79 +31,88 @@ export const columns: ColumnDef<Savings>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'savingsAccountName',
+    accessorKey: 'name',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Savings Account Name' />
+      <DataTableColumnHeader column={column} title='Plan Name' />
     ),
   },
   {
-    accessorKey: 'savingsAccountNumber',
+    accessorKey: 'slug',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Savings Account Number' />
+      <DataTableColumnHeader column={column} title='Slug' />
     ),
   },
   {
-    header: 'User Email',
+    accessorKey: 'description',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Description' />
+    ),
     cell: ({ row }) => (
       <div className='text-muted-foreground text-sm'>
-        {row?.original?.user?.email}
+        {row.getValue('description')}
       </div>
     ),
   },
   {
-    accessorKey: 'currency',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Currency' />
-    ),
-  },
-  {
-    accessorKey: 'bookedBalance',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Booked Balance' />
-    ),
+    header: 'Interest Rate',
     cell: ({ row }) => (
       <div className='text-primary font-medium'>
-        ₦{Number(row.getValue('bookedBalance')).toLocaleString()}
+        {row.original.config.interest_rate}%
       </div>
     ),
   },
   {
-    accessorKey: 'status',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Status' />
-    ),
+    header: 'Duration (days)',
     cell: ({ row }) => {
-      const status = row.getValue<string>('status')
-
-      const statusStyles =
-        status === 'ACTIVE'
-          ? 'bg-green-100 text-green-800 border-green-600'
-          : status === 'PENDING'
-            ? 'bg-yellow-100 text-yellow-800 border-yellow-600'
-            : status === 'FAILED'
-              ? 'bg-red-100 text-red-800 border-red-600'
-              : 'bg-gray-100 text-gray-700 border-gray-400'
-
+      const { minimum_days, maximum_days } = row.original.config
       return (
-        <Badge
-          variant='outline'
-          className={`rounded-full border-2 px-3 py-1 text-xs font-semibold ${statusStyles}`}
-          title={`Wallet is ${status}`}
-        >
-          {status}
-        </Badge>
+        <div className='text-sm'>
+          {minimum_days} - {maximum_days}
+        </div>
       )
     },
   },
   {
-    accessorKey: 'createdAt',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Created At' />
-    ),
+    header: 'Interest Style',
     cell: ({ row }) => (
-      <div className='text-muted-foreground text-sm'>
-        {formatDateTime(row?.getValue('createdAt'))}
-      </div>
+      <Badge className='text-xs capitalize'>
+        {row.original.config.interest_style}
+      </Badge>
+    ),
+  },
+  {
+    header: 'Auto Save',
+    cell: ({ row }) => (
+      <Badge
+        variant='outline'
+        className={`text-xs ${row.original.config.user_can_auto_save ? 'border-green-500 bg-green-50 text-green-600' : 'border-gray-400 text-gray-600'}`}
+      >
+        {row.original.config.user_can_auto_save ? 'Yes' : 'No'}
+      </Badge>
+    ),
+  },
+  {
+    accessorKey: 'is_visible',
+    header: 'Visible',
+    cell: ({ row }) => (
+      <Badge
+        variant='outline'
+        className={`text-xs ${row.getValue('is_visible') ? 'border-green-500 bg-green-50 text-green-600' : 'border-red-500 bg-red-50 text-red-600'}`}
+      >
+        {row.getValue('is_visible') ? 'Yes' : 'No'}
+      </Badge>
+    ),
+  },
+  {
+    accessorKey: 'is_enabled',
+    header: 'Enabled',
+    cell: ({ row }) => (
+      <Badge
+        variant='outline'
+        className={`text-xs ${row.getValue('is_enabled') ? 'border-green-500 bg-green-50 text-green-600' : 'border-red-500 bg-red-50 text-red-600'}`}
+      >
+        {row.getValue('is_enabled') ? 'Yes' : 'No'}
+      </Badge>
     ),
   },
   {

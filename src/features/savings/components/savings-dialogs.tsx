@@ -1,22 +1,23 @@
-import { showSubmittedData } from '@/utils/show-submitted-data';
-import { ConfirmDialog } from '@/components/confirm-dialog';
+import { showSubmittedData } from '@/utils/show-submitted-data'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useSavings } from '../context/savings-context'
-import { SavingsImportDialog } from './savings-import-dialog';
-import { SavingsMutateDrawer } from './savings-mutate-drawer';
-
+import { SavingsImportDialog } from './savings-import-dialog'
+import { SavingsMutateDrawer } from './savings-mutate-drawer'
+import { useDeleteSavings } from '@/hooks/api-hooks/useSaving'
 
 export function SavingsDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useSavings()
+  const {mutate: deleteSavingsMutation, isPending : deleteLoading} = useDeleteSavings()
   return (
     <>
       <SavingsMutateDrawer
-        key='task-create'
+        key='savings-create'
         open={open === 'create'}
         onOpenChange={() => setOpen('create')}
       />
 
       <SavingsImportDialog
-        key='tasks-import'
+        key='savings-import'
         open={open === 'import'}
         onOpenChange={() => setOpen('import')}
       />
@@ -24,7 +25,7 @@ export function SavingsDialogs() {
       {currentRow && (
         <>
           <SavingsMutateDrawer
-            key={`task-update-${currentRow.id}`}
+            key={`savings-update-${currentRow.id}`}
             open={open === 'update'}
             onOpenChange={() => {
               setOpen('update')
@@ -36,9 +37,10 @@ export function SavingsDialogs() {
           />
 
           <ConfirmDialog
-            key='task-delete'
+            key='savings-delete'
             destructive
             open={open === 'delete'}
+            isLoading={deleteLoading} 
             onOpenChange={() => {
               setOpen('delete')
               setTimeout(() => {
@@ -46,20 +48,23 @@ export function SavingsDialogs() {
               }, 500)
             }}
             handleConfirm={() => {
-              setOpen(null)
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-              showSubmittedData(
-                currentRow,
-                'The following task has been deleted:'
-              )
+              if (currentRow?.id) {
+                deleteSavingsMutation(currentRow.id, {
+                  onSuccess: () => {
+                    setOpen(null)
+                    showSubmittedData(
+                      currentRow,
+                      'The following task has been deleted:'
+                    )
+                  }
+                })
+              }
             }}
             className='max-w-md'
-            title={`Delete this task: ${currentRow.id} ?`}
+            title={`Delete this Savings : ${currentRow.name} ?`}
             desc={
               <>
-                You are about to delete a task with the ID{' '}
+                You are about to delete a savings with the ID{' '}
                 <strong>{currentRow.id}</strong>. <br />
                 This action cannot be undone.
               </>
@@ -71,3 +76,4 @@ export function SavingsDialogs() {
     </>
   )
 }
+

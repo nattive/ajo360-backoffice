@@ -1,19 +1,29 @@
-import { Header } from '@/components/layout/header';
-import { Main } from '@/components/layout/main';
-import { ProfileDropdown } from '@/components/profile-dropdown';
-import { Search } from '@/components/search';
-import { ThemeSwitch } from '@/components/theme-switch';
-import { columns } from './components/columns';
-import { DataTable } from './components/data-table';
+import { Loader2 } from 'lucide-react'
+import { useGetSavings } from '@/hooks/api-hooks/useSaving'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { columns } from './components/columns'
+import { DataTable } from './components/data-table'
 import { SavingsDialogs } from './components/savings-dialogs'
-import { SavingsPrimaryButtons } from './components/savings-primary-buttons';
-import WalletProvider from './context/savings-context';
-import { savings } from './data/savings';
+import { SavingsPrimaryButtons } from './components/savings-primary-buttons'
+import SavingsProvider from './context/savings-context'
 
+export default function Savings() {
+  const { data: savings, isLoading } = useGetSavings()
 
-export default function Wallet() {
+  if (isLoading) {
+    return (
+      <div className='flex h-screen items-center justify-center'>
+        <Loader2 className='h-6 w-6 animate-spin' />
+      </div>
+    )
+  }
+
   return (
-    <WalletProvider>
+    <SavingsProvider>
       <Header fixed>
         <Search />
         <div className='ml-auto flex items-center space-x-4'>
@@ -36,11 +46,10 @@ export default function Wallet() {
           <SavingsPrimaryButtons />
         </div>
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-          <DataTable data={savings} columns={columns} />
+          <DataTable data={savings ?? []} columns={columns} />
         </div>
       </Main>
-
       <SavingsDialogs />
-    </WalletProvider>
+    </SavingsProvider>
   )
 }
