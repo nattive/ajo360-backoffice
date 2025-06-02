@@ -31,30 +31,26 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-[160px]'>
-        <DropdownMenuItem>
-          View Transactions
-        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
             setCurrentRow(user)
-            // setOpen('update')
+            setOpen('freeze')
           }}
         >
-          Credit User
+          Freeze User
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
             setCurrentRow(user)
-            setOpen('delete')
+            setOpen('lean')
           }}
         >
-          Suspend User
+          Put on Lean
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
             setCurrentRow(user)
-            setOpen('delete')
+            setOpen('pnd')
           }}
         >
           Put on PND

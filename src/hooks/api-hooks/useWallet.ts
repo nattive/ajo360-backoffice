@@ -1,14 +1,22 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { createWallet, getWallets } from '@/api/wallet-api'
+import { createWallet, getAllWallets } from '@/api/wallet-api'
 
 export const useGetUserWallet = () => {
   return useQuery({
     queryKey: ['allWallet', 'users', 'wallete'],
     queryFn: async () => {
-      // const [_group, _resource, userId] = queryKey
-      // if (!userId) return null
-      const data = await getWallets()
-      return data
+      const data = await getAllWallets()
+
+      // Filter invalid/incomplete wallets
+      const filtered = data?.filter(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (wallet: any) =>
+          wallet.accountNumber &&
+          wallet.availableBalance &&
+          wallet.accountName
+      )
+
+      return filtered
     },
   })
 }

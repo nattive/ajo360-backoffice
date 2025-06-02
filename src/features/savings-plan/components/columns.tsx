@@ -61,13 +61,30 @@ export const columns: ColumnDef<SavingsPlan>[] = [
       </div>
     ),
   },
-  {
+  /* {
     header: 'Duration (days)',
     cell: ({ row }) => {
       const { minimum_days, maximum_days } = row.original.config
       return (
         <div className='text-sm'>
           {minimum_days} - {maximum_days}
+        </div>
+      )
+    },
+  }, */
+  {
+    header: 'Duration (months)',
+    cell: ({ row }) => {
+      const { minimum_days, maximum_days } = row.original.config
+
+      const formatToMonths = (days: number | null) => {
+        if (days === null) return 'N/A'
+        return (days / 30).toFixed(1) // one decimal place
+      }
+
+      return (
+        <div className='text-sm'>
+          {formatToMonths(minimum_days)} - {formatToMonths(maximum_days)}
         </div>
       )
     },

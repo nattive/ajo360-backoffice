@@ -4,7 +4,7 @@ export const savingsPlanConfigSchema = z.object({
   id: z.string(),
   interest_rate: z.string(), // e.g., "10.00"
   minimum_days: z.number(),
-  maximum_days: z.number(),
+  maximum_days: z.number().nullable(),      // <-- changed here
   interest_style: z.enum(['simple', 'compound']),
   allow_break: z.boolean(),
   minimum_percentage_amount: z.number(),

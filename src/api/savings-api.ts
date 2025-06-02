@@ -1,5 +1,5 @@
 import axi from '@/lib/axios'
-import { SavingsPlan } from '@/features/savings/data/schema'
+import { SavingsPlan } from '@/features/savings-plan/data/schema'
 
 export const allSavings = async () => {
   const response = await axi.get('/savings-plan')

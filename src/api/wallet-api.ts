@@ -1,7 +1,7 @@
 import axi from '@/lib/axios'
 
-export const getWallets = async () => {
-  const response = await axi.get('/wallets/user-wallet')
+export const getAllWallets = async () => {
+  const response = await axi.get('/wallets/all-wallets')
   return response.data
 }
 

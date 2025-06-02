@@ -70,6 +70,17 @@ export const columns: ColumnDef<Wallet>[] = [
     ),
   },
   {
+    accessorKey: 'availableBalance',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Available Balance' />
+    ),
+    cell: ({ row }) => (
+      <div className='text-primary font-medium'>
+        ₦{Number(row.getValue('availableBalance')).toLocaleString()}
+      </div>
+    ),
+  },
+  {
     accessorKey: 'status',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Status' />

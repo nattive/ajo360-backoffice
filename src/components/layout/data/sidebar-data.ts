@@ -30,7 +30,7 @@ export const sidebarData: SidebarData = {
   },
   teams: [
     {
-      name: 'Ajo260',
+      name: 'Ajo360',
       logo: Command,
       plan: ''
     },
@@ -55,13 +55,13 @@ export const sidebarData: SidebarData = {
           icon: IconLayoutDashboard,
         },
         {
-          title: 'Wallet',
-          url: '/wallet',
+          title: 'Wallets',
+          url: '/wallets',
           icon: IconChecklist,
         },
         {
-          title: 'Savings',
-          url: '/savings',
+          title: 'Savings Plan',
+          url: '/savings-plan',
           icon: IconPackages,
         },
         // {
@@ -77,15 +77,15 @@ export const sidebarData: SidebarData = {
         },
       ],
     },
-    {
-      title: 'User Management',
-      items: [
-        {
-          title: 'Users Savings',
-          url: '/tasks',
-          icon: IconUsers,
-        },
-      ]
+    // {
+    //  title: 'User Management',
+    //  items: [
+    //    {
+    //      title: 'Users Savings',
+    //      url: '/tasks',
+    //      icon: IconUsers,
+    //    },
+    //  ]
       // items: [
       //   {
       //     title: 'Auth',
@@ -145,7 +145,7 @@ export const sidebarData: SidebarData = {
       //     ],
       //   },
       // ],
-    },
+    // },
     // {
     //   title: 'Other',
     //   items: [

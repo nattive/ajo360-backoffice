@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import { User } from '../data/schema'
 import useDialogState from '@/hooks/use-dialog-state'
 
-type UsersDialogType = 'invite' | 'add' | 'edit' | 'delete'
+// ✅ Extended type to include all modal options
+export type UsersDialogType = 'invite' | 'add' | 'edit' | 'delete' | 'freeze' | 'pnd' | 'lean'
 
 interface UsersContextType {
   open: UsersDialogType | null
@@ -22,9 +23,9 @@ export default function UsersProvider({ children }: Props) {
   const [currentRow, setCurrentRow] = useState<User | null>(null)
 
   return (
-    <UsersContext value={{ open, setOpen, currentRow, setCurrentRow }}>
+    <UsersContext.Provider value={{ open, setOpen, currentRow, setCurrentRow }}>
       {children}
-    </UsersContext>
+    </UsersContext.Provider>
   )
 }
 
