@@ -38,10 +38,22 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         <DropdownMenuItem
           onClick={() => {
             setCurrentRow(savingsPlan)
+            setOpen('updateConfig') 
+          }}
+        >
+          Update Configuration
+          <DropdownMenuShortcut>
+            <IconEdit size={16} />
+          </DropdownMenuShortcut>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem
+          onClick={() => {
+            setCurrentRow(savingsPlan)
             setOpen('update') // enable if edit modal is implemented
           }}
         >
-          Edit
+          Edit Savings Plan
           <DropdownMenuShortcut>
             <IconEdit size={16} />
           </DropdownMenuShortcut>

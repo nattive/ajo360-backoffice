@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { SavingsPlan } from '../data/schema'
 
-type SavingsDialogType = 'create' | 'update' | 'delete' | 'import'
+type SavingsDialogType = 'create' | 'update' | 'delete' | 'import' | 'updateConfig' 
 
 interface SavingsContextType {
   open: SavingsDialogType | null

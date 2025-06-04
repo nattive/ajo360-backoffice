@@ -3,11 +3,13 @@ import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useSavings } from '../context/savings-context'
 import { SavingsImportDialog } from './savings-import-dialog'
 import { SavingsMutateDrawer } from './savings-mutate-drawer'
+import { UpdateConfigModal } from './update-config-modal' // Make sure this path is correct
 import { useDeleteSavings } from '@/hooks/api-hooks/useSaving'
 
 export function SavingsDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useSavings()
-  const {mutate: deleteSavingsMutation, isPending : deleteLoading} = useDeleteSavings()
+  const { mutate: deleteSavingsMutation, isPending: deleteLoading } = useDeleteSavings()
+
   return (
     <>
       <SavingsMutateDrawer
@@ -40,7 +42,7 @@ export function SavingsDialogs() {
             key='savings-delete'
             destructive
             open={open === 'delete'}
-            isLoading={deleteLoading} 
+            isLoading={deleteLoading}
             onOpenChange={() => {
               setOpen('delete')
               setTimeout(() => {
@@ -71,9 +73,11 @@ export function SavingsDialogs() {
             }
             confirmText='Delete'
           />
+
+          {/* ✅ New Modal for Updating Configuration */}
+          <UpdateConfigModal />
         </>
       )}
     </>
   )
 }
-
