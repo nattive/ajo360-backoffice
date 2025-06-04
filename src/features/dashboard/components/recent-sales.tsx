@@ -1,83 +1,108 @@
+import { useEffect, useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import axios from '@/lib/axios'
+
+interface Transaction {
+  id: string
+  amount: number
+  type: 'credit' | 'debit'
+  createdAt: string
+  userId: string
+  narration: string
+  currency: string
+}
+
+interface User {
+  id: string
+  fullName: string
+  email: string
+  profilePicture: string | null
+}
+
+interface Wallet {
+  id: string
+  user: User
+  transactions: Transaction[]
+}
 
 export function RecentSales() {
+  const [transactions, setTransactions] = useState<(Transaction & { user: User })[]>([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchRecentTransactions() {
+      setLoading(true)
+      try {
+        const res = await axios.get<Wallet[]>('https://api.myajo360.com/wallets/all-wallets') 
+        const wallets = res.data
+
+        // Flatten transactions across all wallets
+        const allTransactions = wallets.flatMap(wallet =>
+          (wallet.transactions || []).map(txn => ({
+            ...txn,
+            user: wallet.user,
+          }))
+        )
+
+        // Sort by date (descending)
+        const sorted = allTransactions.sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+
+        // Take only latest 5 if more
+        const latest = sorted.slice(0, 5)
+        setTransactions(latest)
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to fetch transactions:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchRecentTransactions()
+  }, [])
+
+  if (loading) {
+    return <p>Loading recent transactions...</p>
+  }
+
+  if (!transactions.length) {
+    return <p>No recent transactions found.</p>
+  }
+
   return (
-    <div className='space-y-8'>
-      <div className='flex items-center gap-4'>
-        <Avatar className='h-9 w-9'>
-          <AvatarImage src='/avatars/01.png' alt='Avatar' />
-          <AvatarFallback>OM</AvatarFallback>
-        </Avatar>
-        <div className='flex flex-1 flex-wrap items-center justify-between'>
-          <div className='space-y-1'>
-            <p className='text-sm leading-none font-medium'>Olivia Martin</p>
-            <p className='text-muted-foreground text-sm'>
-              olivia.martin@email.com
-            </p>
-          </div>
-          <div className='font-medium'>+$1,999.00</div>
-        </div>
-      </div>
-      <div className='flex items-center gap-4'>
-        <Avatar className='flex h-9 w-9 items-center justify-center space-y-0 border'>
-          <AvatarImage src='/avatars/02.png' alt='Avatar' />
-          <AvatarFallback>JL</AvatarFallback>
-        </Avatar>
-        <div className='flex flex-1 flex-wrap items-center justify-between'>
-          <div className='space-y-1'>
-            <p className='text-sm leading-none font-medium'>Jackson Lee</p>
-            <p className='text-muted-foreground text-sm'>
-              jackson.lee@email.com
-            </p>
-          </div>
-          <div className='font-medium'>+$39.00</div>
-        </div>
-      </div>
-      <div className='flex items-center gap-4'>
-        <Avatar className='h-9 w-9'>
-          <AvatarImage src='/avatars/03.png' alt='Avatar' />
-          <AvatarFallback>IN</AvatarFallback>
-        </Avatar>
-        <div className='flex flex-1 flex-wrap items-center justify-between'>
-          <div className='space-y-1'>
-            <p className='text-sm leading-none font-medium'>Isabella Nguyen</p>
-            <p className='text-muted-foreground text-sm'>
-              isabella.nguyen@email.com
-            </p>
-          </div>
-          <div className='font-medium'>+$299.00</div>
-        </div>
-      </div>
+    <div className="space-y-8">
+      {transactions.map(txn => {
+        const initials = txn.user.fullName
+          .split(' ')
+          .map(n => n[0])
+          .join('')
+          .toUpperCase()
 
-      <div className='flex items-center gap-4'>
-        <Avatar className='h-9 w-9'>
-          <AvatarImage src='/avatars/04.png' alt='Avatar' />
-          <AvatarFallback>WK</AvatarFallback>
-        </Avatar>
-        <div className='flex flex-1 flex-wrap items-center justify-between'>
-          <div className='space-y-1'>
-            <p className='text-sm leading-none font-medium'>William Kim</p>
-            <p className='text-muted-foreground text-sm'>will@email.com</p>
-          </div>
-          <div className='font-medium'>+$99.00</div>
-        </div>
-      </div>
+        return (
+          <div key={txn.id} className="flex items-center gap-4">
+            <Avatar className="h-9 w-9">
+              {txn.user.profilePicture ? (
+                <AvatarImage src={txn.user.profilePicture} alt={txn.user.fullName} />
+              ) : (
+                <AvatarFallback>{initials}</AvatarFallback>
+              )}
+            </Avatar>
 
-      <div className='flex items-center gap-4'>
-        <Avatar className='h-9 w-9'>
-          <AvatarImage src='/avatars/05.png' alt='Avatar' />
-          <AvatarFallback>SD</AvatarFallback>
-        </Avatar>
-        <div className='flex flex-1 flex-wrap items-center justify-between'>
-          <div className='space-y-1'>
-            <p className='text-sm leading-none font-medium'>Sofia Davis</p>
-            <p className='text-muted-foreground text-sm'>
-              sofia.davis@email.com
-            </p>
+            <div className="flex flex-1 flex-wrap items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm leading-none font-medium">{txn.user.fullName}</p>
+                <p className="text-muted-foreground text-sm">{txn.user.email}</p>
+              </div>
+              <div className="font-medium">
+                {txn.type === 'credit' ? '+' : '-'}
+                ₦{Number(txn.amount).toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+              </div>
+            </div>
           </div>
-          <div className='font-medium'>+$39.00</div>
-        </div>
-      </div>
+        )
+      })}
     </div>
   )
 }
