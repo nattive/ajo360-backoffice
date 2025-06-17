@@ -1,9 +1,8 @@
-import { useForm } from 'react-hook-form'
+ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { loginFormSchema, LoginFormSchemaType } from '@/schemas/authSchemas'
 import { cn } from '@/lib/utils'
-import { useLogin } from '@/hooks/api-hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -15,13 +14,13 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import { toast } from 'sonner' 
+import axios from 'axios'
 
 export function UserAuthForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<'form'>) {
-  const { mutate: loginMutationFuncton, isLoading: loginIsLoading } = useLogin()
-
   const navigate = useNavigate()
 
   const form = useForm<LoginFormSchemaType>({
@@ -33,11 +32,22 @@ export function UserAuthForm({
   })
 
   const handleLoginSubmit = async (data: LoginFormSchemaType) => {
-    loginMutationFuncton(data, {
-      onSuccess: () => {
-        navigate({ to: '/' })
-      },
-    })
+    try {
+      // Step 1: Send OTP to email
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const response = await axios.post('https://api.myajo360.com/admin/login/initiate', {
+        email: data.email,
+      })
+
+      toast.success('OTP sent successfully to your email.')
+
+      // Step 2: Redirect to verify-otp with email
+      navigate({ to: '/verify-otp', search: { email: data.email } })
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+      toast.error('Failed to send OTP. Please try again.')
+    }
   }
 
   return (
@@ -82,12 +92,11 @@ export function UserAuthForm({
 
         <Button
           className='mt-2 bg-blue-700 hover:bg-blue-900'
-          disabled={loginIsLoading}
-          isLoading={loginIsLoading}
+          type='submit'
         >
           Login
         </Button>
       </form>
     </Form>
   )
-}
+}  
