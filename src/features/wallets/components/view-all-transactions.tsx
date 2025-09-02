@@ -22,7 +22,7 @@ export function AllTransactions() {
 
   return (
     <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2">
-      {sorted.map(txn => {
+      {sorted.map((txn: TransactionType) => {
         const fullName = `${txn.user.firstName} ${txn.user.lastName}`
         const initials = fullName
           .split(' ')
@@ -61,7 +61,7 @@ export function AllTransactions() {
                 {Number(txn.amount).toLocaleString('en-NG', { minimumFractionDigits: 2 })}
               </p>
               <p>
-                <strong>Narration:</strong> {txn.narration || 'N/A'}
+                <strong>Narration:</strong> {txn.description || 'N/A'}
               </p>
               <p>
                 <strong>Date:</strong> {new Date(txn.createdAt).toLocaleString()}

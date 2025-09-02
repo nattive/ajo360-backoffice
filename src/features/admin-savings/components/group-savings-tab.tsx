@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetGroupSavings } from '@/hooks/api-hooks/useSaving'
 import { SavingsQueryParams } from '@/api/admin-api'
 import { GroupSavingsDataTable } from './group-savings-data-table'

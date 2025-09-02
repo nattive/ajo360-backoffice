@@ -1,14 +1,9 @@
-import { 
-  // IconDownload, 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  IconPlus } from '@tabler/icons-react'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Button } from '@/components/ui/button'
-import { useWallets } from '../context/wallet-context'
+// import { IconDownload, IconPlus } from '@tabler/icons-react'
+// import { Button } from '@/components/ui/button'
+// import { useWallets } from '../context/wallet-context'
 
 export function WalletPrimaryButtons() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { setOpen } = useWallets()
+  // const { setOpen } = useWallets()
   return (
     <div className='flex gap-2'>
       {/* <Button

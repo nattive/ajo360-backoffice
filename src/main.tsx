@@ -41,7 +41,7 @@ const queryClient = new QueryClient({
     },
     mutations: {
       onError: (error) => {
-        const _errorResult = handleServerError(error)
+        handleServerError(error)
 
         // Handle 401 errors for mutations
         if (error instanceof AxiosError) {
@@ -54,7 +54,7 @@ const queryClient = new QueryClient({
   },
   queryCache: new QueryCache({
     onError: (error) => {
-      const _errorResult = handleServerError(error)
+      handleServerError(error)
 
       // Handle 401 errors for queries
       if (error instanceof AxiosError) {

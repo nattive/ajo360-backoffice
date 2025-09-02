@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -16,8 +16,8 @@ interface SavingsFiltersProps {
 }
 
 export function SavingsFilters({ filters, onFilterChange, showMaturityDate = false }: SavingsFiltersProps) {
-  const [startDate, setStartDate] = React.useState<Date | undefined>()
-  const [endDate, setEndDate] = React.useState<Date | undefined>()
+  const [startDate, setStartDate] = useState<Date | undefined>()
+  const [endDate, setEndDate] = useState<Date | undefined>()
 
   const handleSearchChange = (value: string) => {
     onFilterChange({ search: value || undefined })
@@ -55,7 +55,7 @@ export function SavingsFilters({ filters, onFilterChange, showMaturityDate = fal
     })
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (startDate || endDate) {
       handleDateRangeChange()
     }

@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetBusinessTargets } from '@/hooks/api-hooks/useSaving'
 import { SavingsQueryParams } from '@/api/admin-api'
 import { BusinessTargetsDataTable } from './business-targets-data-table'

@@ -1,6 +1,5 @@
-import React from 'react'
-import { useGetLockedSavings } from '@/hooks/api-hooks/useSaving'
 import { SavingsQueryParams } from '@/api/admin-api'
+import { useGetLockedSavings } from '@/hooks/api-hooks/useSaving'
 import { LockedSavingsDataTable } from './locked-savings-data-table'
 import { SavingsFilters } from './savings-filters'
 
@@ -9,12 +8,15 @@ interface LockedSavingsTabProps {
   onFilterChange: (filters: Partial<SavingsQueryParams>) => void
 }
 
-export function LockedSavingsTab({ filters, onFilterChange }: LockedSavingsTabProps) {
+export function LockedSavingsTab({
+  filters,
+  onFilterChange,
+}: LockedSavingsTabProps) {
   const { data: lockedSavings, isLoading, error } = useGetLockedSavings(filters)
 
   if (error) {
     return (
-      <div className='flex items-center justify-center h-32'>
+      <div className='flex h-32 items-center justify-center'>
         <p className='text-destructive'>Error loading locked savings data</p>
       </div>
     )
@@ -22,22 +24,22 @@ export function LockedSavingsTab({ filters, onFilterChange }: LockedSavingsTabPr
 
   return (
     <div className='space-y-4'>
-      <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
+      <div className='flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center'>
         <div>
           <h3 className='text-lg font-semibold'>Locked Savings</h3>
-          <p className='text-sm text-muted-foreground'>
+          <p className='text-muted-foreground text-sm'>
             Manage locked savings with fixed terms and maturity dates
           </p>
         </div>
       </div>
 
-      <SavingsFilters 
-        filters={filters} 
+      <SavingsFilters
+        filters={filters}
         onFilterChange={onFilterChange}
         showMaturityDate={true}
       />
 
-      <LockedSavingsDataTable 
+      <LockedSavingsDataTable
         data={lockedSavings?.data || []}
         meta={lockedSavings?.meta}
         loading={isLoading}

@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetBusinessLocks } from '@/hooks/api-hooks/useSaving'
 import { SavingsQueryParams } from '@/api/admin-api'
 import { BusinessLocksDataTable } from './business-locks-data-table'
