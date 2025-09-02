@@ -1,4 +1,3 @@
-import React from 'react'
 import { useGetTargetSavings } from '@/hooks/api-hooks/useSaving'
 import { SavingsQueryParams } from '@/api/admin-api'
 import { TargetSavingsDataTable } from './target-savings-data-table'

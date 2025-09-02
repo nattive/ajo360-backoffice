@@ -1,4 +1,3 @@
-import React from 'react';
 import { FunnelChart } from 'react-funnel-pipeline';
 import 'react-funnel-pipeline/dist/index.css';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

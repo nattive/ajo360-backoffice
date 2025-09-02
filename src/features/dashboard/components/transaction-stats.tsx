@@ -24,6 +24,12 @@ export function TransactionStats({ transactionStats }: TransactionStatsProps) {
   } = transactionStats
 
   const averageTransactionAmount = totalCount > 0 ? totalAmount / totalCount : 0
+  // Mock data for missing variables - these should be calculated from actual data
+  const pendingTransactions = 0
+  const pendingRate = 0
+  const totalTransactionVolume = totalAmount
+  const transactionsThisMonth = totalCount
+  const transactionVolumeThisMonth = totalAmount
 
   return (
     <div className="space-y-4">

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PiggyBank, Target, Lock, TrendingUp } from 'lucide-react'
 import { 
