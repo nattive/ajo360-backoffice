@@ -1,14 +1,14 @@
-import { showSubmittedData } from '@/utils/show-submitted-data'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useSavings } from '../context/savings-context'
 import { SavingsImportDialog } from './savings-import-dialog'
 import { SavingsMutateDrawer } from './savings-mutate-drawer'
 import { UpdateConfigModal } from './update-config-modal' // Make sure this path is correct
-import { useDeleteSavings } from '@/hooks/api-hooks/useSaving'
+
 
 export function SavingsDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useSavings()
-  const { mutate: deleteSavingsMutation, isPending: deleteLoading } = useDeleteSavings()
+  // Delete functionality removed - API endpoints no longer available
+  const deleteLoading = false
 
   return (
     <>
@@ -50,17 +50,8 @@ export function SavingsDialogs() {
               }, 500)
             }}
             handleConfirm={() => {
-              if (currentRow?.id) {
-                deleteSavingsMutation(currentRow.id, {
-                  onSuccess: () => {
-                    setOpen(null)
-                    showSubmittedData(
-                      currentRow,
-                      'The following task has been deleted:'
-                    )
-                  }
-                })
-              }
+              // Delete functionality removed - API endpoints no longer available
+              setOpen(null)
             }}
             className='max-w-md'
             title={`Delete this Savings : ${currentRow.name} ?`}

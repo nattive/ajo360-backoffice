@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { IconAlertTriangle } from '@tabler/icons-react'
-import { showSubmittedData } from '@/utils/show-submitted-data'
+import { useUpdateUserStatus } from '@/hooks/api-hooks/useAdmin'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -17,12 +17,19 @@ interface Props {
 
 export function UsersFreezeDialog({ open, onOpenChange, currentRow }: Props) {
   const [value, setValue] = useState('')
+  const updateUserStatus = useUpdateUserStatus()
 
   const handleFreeze = () => {
     if (value.trim() !== currentRow.email) return
 
+    updateUserStatus.mutate({
+      userId: currentRow.id,
+      statusData: {
+        status: 'suspended',
+        reason: 'User account frozen by admin'
+      }
+    })
     onOpenChange(false)
-    showSubmittedData(currentRow, 'The following user has been frozen:')
   }
 
   return (

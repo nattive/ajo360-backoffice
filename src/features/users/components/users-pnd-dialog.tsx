@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { IconAlertTriangle } from '@tabler/icons-react'
-import { showSubmittedData } from '@/utils/show-submitted-data'
+import { useUpdateUserStatus } from '@/hooks/api-hooks/useAdmin'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Textarea } from "@/components/ui/textarea"
@@ -19,19 +19,19 @@ interface Props {
 export function UsersPNDDialog({ open, onOpenChange, currentRow }: Props) {
   const [reason, setReason] = useState('')
   const [username, setUsername] = useState('')
+  const updateUserStatus = useUpdateUserStatus()
 
   const handlePND = () => {
     if (username.trim() !== currentRow.email) return
 
+    updateUserStatus.mutate({
+      userId: currentRow.id,
+      statusData: {
+        status: 'suspended',
+        reason: `User placed on PND - Reason: ${reason}`
+      }
+    })
     onOpenChange(false)
-    showSubmittedData(
-      {
-        ...currentRow,
-        reason,
-        username,
-      },
-      'The following user has been placed on PND:'
-    )
   }
 
   return (

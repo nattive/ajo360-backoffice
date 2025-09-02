@@ -15,7 +15,7 @@ export const FontProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [font, _setFont] = useState<Font>(() => {
     const savedFont = localStorage.getItem('font')
-    return fonts.includes(savedFont as Font) ? (savedFont as Font) : fonts[0]
+    return fonts.includes(savedFont as Font) ? (savedFont as Font) : fonts?.[0] || 'Inter'
   })
 
   useEffect(() => {

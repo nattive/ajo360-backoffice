@@ -18,24 +18,27 @@ import { Route as errors500Import } from './routes/(errors)/500'
 import { Route as errors404Import } from './routes/(errors)/404'
 import { Route as errors403Import } from './routes/(errors)/403'
 import { Route as errors401Import } from './routes/(errors)/401'
-import { Route as authSignUpImport } from './routes/(auth)/sign-up'
 import { Route as authSignInImport } from './routes/(auth)/sign-in'
-import { Route as authOtpImport } from './routes/(auth)/otp'
 import { Route as authForgotPasswordImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings/route'
 import { Route as AuthenticatedWalletsIndexImport } from './routes/_authenticated/wallets/index'
+import { Route as AuthenticatedWalletRequestsIndexImport } from './routes/_authenticated/wallet-requests/index'
 import { Route as AuthenticatedUsersIndexImport } from './routes/_authenticated/users/index'
+import { Route as AuthenticatedTransactionsIndexImport } from './routes/_authenticated/transactions/index'
 import { Route as AuthenticatedTasksIndexImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedSavingsIndexImport } from './routes/_authenticated/savings/index'
 import { Route as AuthenticatedSavingsPlanIndexImport } from './routes/_authenticated/savings-plan/index'
 import { Route as AuthenticatedHelpCenterIndexImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedChatsIndexImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedAppsIndexImport } from './routes/_authenticated/apps/index'
 import { Route as AuthenticatedUsersUserIdImport } from './routes/_authenticated/users/$userId'
+import { Route as AuthenticatedTransactionsTransactionIdImport } from './routes/_authenticated/transactions/$transactionId'
 import { Route as AuthenticatedSettingsNotificationsImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsDisplayImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountImport } from './routes/_authenticated/settings/account'
+import { Route as AuthenticatedSavingsSavingIdImport } from './routes/_authenticated/savings/$savingId'
 
 // Create/Update Routes
 
@@ -80,21 +83,9 @@ const errors401Route = errors401Import.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const authSignUpRoute = authSignUpImport.update({
-  id: '/(auth)/sign-up',
-  path: '/sign-up',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const authSignInRoute = authSignInImport.update({
   id: '/(auth)/sign-in',
   path: '/sign-in',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const authOtpRoute = authOtpImport.update({
-  id: '/(auth)/otp',
-  path: '/otp',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -118,11 +109,25 @@ const AuthenticatedWalletsIndexRoute = AuthenticatedWalletsIndexImport.update({
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
+const AuthenticatedWalletRequestsIndexRoute =
+  AuthenticatedWalletRequestsIndexImport.update({
+    id: '/wallet-requests/',
+    path: '/wallet-requests/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+
 const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexImport.update({
   id: '/users/',
   path: '/users/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+
+const AuthenticatedTransactionsIndexRoute =
+  AuthenticatedTransactionsIndexImport.update({
+    id: '/transactions/',
+    path: '/transactions/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexImport.update({
   id: '/tasks/',
@@ -137,6 +142,12 @@ const AuthenticatedSettingsIndexRoute = AuthenticatedSettingsIndexImport.update(
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any,
 )
+
+const AuthenticatedSavingsIndexRoute = AuthenticatedSavingsIndexImport.update({
+  id: '/savings/',
+  path: '/savings/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 const AuthenticatedSavingsPlanIndexRoute =
   AuthenticatedSavingsPlanIndexImport.update({
@@ -170,6 +181,13 @@ const AuthenticatedUsersUserIdRoute = AuthenticatedUsersUserIdImport.update({
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
+const AuthenticatedTransactionsTransactionIdRoute =
+  AuthenticatedTransactionsTransactionIdImport.update({
+    id: '/transactions/$transactionId',
+    path: '/transactions/$transactionId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+
 const AuthenticatedSettingsNotificationsRoute =
   AuthenticatedSettingsNotificationsImport.update({
     id: '/notifications',
@@ -198,6 +216,13 @@ const AuthenticatedSettingsAccountRoute =
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
 
+const AuthenticatedSavingsSavingIdRoute =
+  AuthenticatedSavingsSavingIdImport.update({
+    id: '/savings/$savingId',
+    path: '/savings/$savingId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -223,25 +248,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authForgotPasswordImport
       parentRoute: typeof rootRoute
     }
-    '/(auth)/otp': {
-      id: '/(auth)/otp'
-      path: '/otp'
-      fullPath: '/otp'
-      preLoaderRoute: typeof authOtpImport
-      parentRoute: typeof rootRoute
-    }
     '/(auth)/sign-in': {
       id: '/(auth)/sign-in'
       path: '/sign-in'
       fullPath: '/sign-in'
       preLoaderRoute: typeof authSignInImport
-      parentRoute: typeof rootRoute
-    }
-    '/(auth)/sign-up': {
-      id: '/(auth)/sign-up'
-      path: '/sign-up'
-      fullPath: '/sign-up'
-      preLoaderRoute: typeof authSignUpImport
       parentRoute: typeof rootRoute
     }
     '/(errors)/401': {
@@ -286,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/savings/$savingId': {
+      id: '/_authenticated/savings/$savingId'
+      path: '/savings/$savingId'
+      fullPath: '/savings/$savingId'
+      preLoaderRoute: typeof AuthenticatedSavingsSavingIdImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/settings/account': {
       id: '/_authenticated/settings/account'
       path: '/account'
@@ -313,6 +331,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/notifications'
       preLoaderRoute: typeof AuthenticatedSettingsNotificationsImport
       parentRoute: typeof AuthenticatedSettingsRouteImport
+    }
+    '/_authenticated/transactions/$transactionId': {
+      id: '/_authenticated/transactions/$transactionId'
+      path: '/transactions/$transactionId'
+      fullPath: '/transactions/$transactionId'
+      preLoaderRoute: typeof AuthenticatedTransactionsTransactionIdImport
+      parentRoute: typeof AuthenticatedRouteImport
     }
     '/_authenticated/users/$userId': {
       id: '/_authenticated/users/$userId'
@@ -349,6 +374,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSavingsPlanIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/savings/': {
+      id: '/_authenticated/savings/'
+      path: '/savings'
+      fullPath: '/savings'
+      preLoaderRoute: typeof AuthenticatedSavingsIndexImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/settings/': {
       id: '/_authenticated/settings/'
       path: '/'
@@ -363,11 +395,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTasksIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/transactions/': {
+      id: '/_authenticated/transactions/'
+      path: '/transactions'
+      fullPath: '/transactions'
+      preLoaderRoute: typeof AuthenticatedTransactionsIndexImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/users/': {
       id: '/_authenticated/users/'
       path: '/users'
       fullPath: '/users'
       preLoaderRoute: typeof AuthenticatedUsersIndexImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/wallet-requests/': {
+      id: '/_authenticated/wallet-requests/'
+      path: '/wallet-requests'
+      fullPath: '/wallet-requests'
+      preLoaderRoute: typeof AuthenticatedWalletRequestsIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
     '/_authenticated/wallets/': {
@@ -408,26 +454,37 @@ const AuthenticatedSettingsRouteRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedSavingsSavingIdRoute: typeof AuthenticatedSavingsSavingIdRoute
+  AuthenticatedTransactionsTransactionIdRoute: typeof AuthenticatedTransactionsTransactionIdRoute
   AuthenticatedUsersUserIdRoute: typeof AuthenticatedUsersUserIdRoute
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedSavingsPlanIndexRoute: typeof AuthenticatedSavingsPlanIndexRoute
+  AuthenticatedSavingsIndexRoute: typeof AuthenticatedSavingsIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
+  AuthenticatedTransactionsIndexRoute: typeof AuthenticatedTransactionsIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
+  AuthenticatedWalletRequestsIndexRoute: typeof AuthenticatedWalletRequestsIndexRoute
   AuthenticatedWalletsIndexRoute: typeof AuthenticatedWalletsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedSavingsSavingIdRoute: AuthenticatedSavingsSavingIdRoute,
+  AuthenticatedTransactionsTransactionIdRoute:
+    AuthenticatedTransactionsTransactionIdRoute,
   AuthenticatedUsersUserIdRoute: AuthenticatedUsersUserIdRoute,
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedSavingsPlanIndexRoute: AuthenticatedSavingsPlanIndexRoute,
+  AuthenticatedSavingsIndexRoute: AuthenticatedSavingsIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
+  AuthenticatedTransactionsIndexRoute: AuthenticatedTransactionsIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
+  AuthenticatedWalletRequestsIndexRoute: AuthenticatedWalletRequestsIndexRoute,
   AuthenticatedWalletsIndexRoute: AuthenticatedWalletsIndexRoute,
 }
 
@@ -438,53 +495,59 @@ export interface FileRoutesByFullPath {
   '': typeof AuthenticatedRouteRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
-  '/otp': typeof authOtpRoute
   '/sign-in': typeof authSignInRoute
-  '/sign-up': typeof authSignUpRoute
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
+  '/savings/$savingId': typeof AuthenticatedSavingsSavingIdRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/transactions/$transactionId': typeof AuthenticatedTransactionsTransactionIdRoute
   '/users/$userId': typeof AuthenticatedUsersUserIdRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/savings-plan': typeof AuthenticatedSavingsPlanIndexRoute
+  '/savings': typeof AuthenticatedSavingsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
+  '/transactions': typeof AuthenticatedTransactionsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/wallet-requests': typeof AuthenticatedWalletRequestsIndexRoute
   '/wallets': typeof AuthenticatedWalletsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/forgot-password': typeof authForgotPasswordRoute
-  '/otp': typeof authOtpRoute
   '/sign-in': typeof authSignInRoute
-  '/sign-up': typeof authSignUpRoute
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
+  '/savings/$savingId': typeof AuthenticatedSavingsSavingIdRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/transactions/$transactionId': typeof AuthenticatedTransactionsTransactionIdRoute
   '/users/$userId': typeof AuthenticatedUsersUserIdRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/savings-plan': typeof AuthenticatedSavingsPlanIndexRoute
+  '/savings': typeof AuthenticatedSavingsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
+  '/transactions': typeof AuthenticatedTransactionsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/wallet-requests': typeof AuthenticatedWalletRequestsIndexRoute
   '/wallets': typeof AuthenticatedWalletsIndexRoute
 }
 
@@ -493,27 +556,30 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
-  '/(auth)/otp': typeof authOtpRoute
   '/(auth)/sign-in': typeof authSignInRoute
-  '/(auth)/sign-up': typeof authSignUpRoute
   '/(errors)/401': typeof errors401Route
   '/(errors)/403': typeof errors403Route
   '/(errors)/404': typeof errors404Route
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/savings/$savingId': typeof AuthenticatedSavingsSavingIdRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/_authenticated/transactions/$transactionId': typeof AuthenticatedTransactionsTransactionIdRoute
   '/_authenticated/users/$userId': typeof AuthenticatedUsersUserIdRoute
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/savings-plan/': typeof AuthenticatedSavingsPlanIndexRoute
+  '/_authenticated/savings/': typeof AuthenticatedSavingsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
+  '/_authenticated/transactions/': typeof AuthenticatedTransactionsIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/wallet-requests/': typeof AuthenticatedWalletRequestsIndexRoute
   '/_authenticated/wallets/': typeof AuthenticatedWalletsIndexRoute
 }
 
@@ -523,79 +589,88 @@ export interface FileRouteTypes {
     | ''
     | '/settings'
     | '/forgot-password'
-    | '/otp'
     | '/sign-in'
-    | '/sign-up'
     | '/401'
     | '/403'
     | '/404'
     | '/500'
     | '/503'
     | '/'
+    | '/savings/$savingId'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/transactions/$transactionId'
     | '/users/$userId'
     | '/apps'
     | '/chats'
     | '/help-center'
     | '/savings-plan'
+    | '/savings'
     | '/settings/'
     | '/tasks'
+    | '/transactions'
     | '/users'
+    | '/wallet-requests'
     | '/wallets'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
-    | '/otp'
     | '/sign-in'
-    | '/sign-up'
     | '/401'
     | '/403'
     | '/404'
     | '/500'
     | '/503'
     | '/'
+    | '/savings/$savingId'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/transactions/$transactionId'
     | '/users/$userId'
     | '/apps'
     | '/chats'
     | '/help-center'
     | '/savings-plan'
+    | '/savings'
     | '/settings'
     | '/tasks'
+    | '/transactions'
     | '/users'
+    | '/wallet-requests'
     | '/wallets'
   id:
     | '__root__'
     | '/_authenticated'
     | '/_authenticated/settings'
     | '/(auth)/forgot-password'
-    | '/(auth)/otp'
     | '/(auth)/sign-in'
-    | '/(auth)/sign-up'
     | '/(errors)/401'
     | '/(errors)/403'
     | '/(errors)/404'
     | '/(errors)/500'
     | '/(errors)/503'
     | '/_authenticated/'
+    | '/_authenticated/savings/$savingId'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
     | '/_authenticated/settings/notifications'
+    | '/_authenticated/transactions/$transactionId'
     | '/_authenticated/users/$userId'
     | '/_authenticated/apps/'
     | '/_authenticated/chats/'
     | '/_authenticated/help-center/'
     | '/_authenticated/savings-plan/'
+    | '/_authenticated/savings/'
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
+    | '/_authenticated/transactions/'
     | '/_authenticated/users/'
+    | '/_authenticated/wallet-requests/'
     | '/_authenticated/wallets/'
   fileRoutesById: FileRoutesById
 }
@@ -603,9 +678,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   authForgotPasswordRoute: typeof authForgotPasswordRoute
-  authOtpRoute: typeof authOtpRoute
   authSignInRoute: typeof authSignInRoute
-  authSignUpRoute: typeof authSignUpRoute
   errors401Route: typeof errors401Route
   errors403Route: typeof errors403Route
   errors404Route: typeof errors404Route
@@ -616,9 +689,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   authForgotPasswordRoute: authForgotPasswordRoute,
-  authOtpRoute: authOtpRoute,
   authSignInRoute: authSignInRoute,
-  authSignUpRoute: authSignUpRoute,
   errors401Route: errors401Route,
   errors403Route: errors403Route,
   errors404Route: errors404Route,
@@ -638,9 +709,7 @@ export const routeTree = rootRoute
       "children": [
         "/_authenticated",
         "/(auth)/forgot-password",
-        "/(auth)/otp",
         "/(auth)/sign-in",
-        "/(auth)/sign-up",
         "/(errors)/401",
         "/(errors)/403",
         "/(errors)/404",
@@ -653,13 +722,18 @@ export const routeTree = rootRoute
       "children": [
         "/_authenticated/settings",
         "/_authenticated/",
+        "/_authenticated/savings/$savingId",
+        "/_authenticated/transactions/$transactionId",
         "/_authenticated/users/$userId",
         "/_authenticated/apps/",
         "/_authenticated/chats/",
         "/_authenticated/help-center/",
         "/_authenticated/savings-plan/",
+        "/_authenticated/savings/",
         "/_authenticated/tasks/",
+        "/_authenticated/transactions/",
         "/_authenticated/users/",
+        "/_authenticated/wallet-requests/",
         "/_authenticated/wallets/"
       ]
     },
@@ -677,14 +751,8 @@ export const routeTree = rootRoute
     "/(auth)/forgot-password": {
       "filePath": "(auth)/forgot-password.tsx"
     },
-    "/(auth)/otp": {
-      "filePath": "(auth)/otp.tsx"
-    },
     "/(auth)/sign-in": {
       "filePath": "(auth)/sign-in.tsx"
-    },
-    "/(auth)/sign-up": {
-      "filePath": "(auth)/sign-up.tsx"
     },
     "/(errors)/401": {
       "filePath": "(errors)/401.tsx"
@@ -705,6 +773,10 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/index.tsx",
       "parent": "/_authenticated"
     },
+    "/_authenticated/savings/$savingId": {
+      "filePath": "_authenticated/savings/$savingId.tsx",
+      "parent": "/_authenticated"
+    },
     "/_authenticated/settings/account": {
       "filePath": "_authenticated/settings/account.tsx",
       "parent": "/_authenticated/settings"
@@ -720,6 +792,10 @@ export const routeTree = rootRoute
     "/_authenticated/settings/notifications": {
       "filePath": "_authenticated/settings/notifications.tsx",
       "parent": "/_authenticated/settings"
+    },
+    "/_authenticated/transactions/$transactionId": {
+      "filePath": "_authenticated/transactions/$transactionId.tsx",
+      "parent": "/_authenticated"
     },
     "/_authenticated/users/$userId": {
       "filePath": "_authenticated/users/$userId.tsx",
@@ -741,6 +817,10 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/savings-plan/index.tsx",
       "parent": "/_authenticated"
     },
+    "/_authenticated/savings/": {
+      "filePath": "_authenticated/savings/index.tsx",
+      "parent": "/_authenticated"
+    },
     "/_authenticated/settings/": {
       "filePath": "_authenticated/settings/index.tsx",
       "parent": "/_authenticated/settings"
@@ -749,8 +829,16 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/tasks/index.tsx",
       "parent": "/_authenticated"
     },
+    "/_authenticated/transactions/": {
+      "filePath": "_authenticated/transactions/index.tsx",
+      "parent": "/_authenticated"
+    },
     "/_authenticated/users/": {
       "filePath": "_authenticated/users/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/wallet-requests/": {
+      "filePath": "_authenticated/wallet-requests/index.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/wallets/": {

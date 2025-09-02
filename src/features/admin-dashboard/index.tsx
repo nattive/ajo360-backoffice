@@ -13,27 +13,13 @@ import {
 } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { WithdrawalsManagement } from './components/withdrawals-management'
+import { formatCurrencyCompact } from '@/lib/currency'
+import { LoadingWrapper } from '@/components/ui/loading-spinner'
 
 export default function AdminDashboard() {
   const { hasPermission } = useAdmin()
   const { data: dashboardData, isLoading, error } = useGetAdminDashboard()
   const [activeTab, setActiveTab] = useState('overview')
-
-  if (isLoading) {
-    return (
-      <div className='flex h-96 items-center justify-center'>
-        <div className='text-lg'>Loading admin dashboard...</div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className='flex h-96 items-center justify-center'>
-        <div className='text-lg text-red-600'>Error loading dashboard data</div>
-      </div>
-    )
-  }
 
   return (
     <div className='space-y-6'>
@@ -43,6 +29,14 @@ export default function AdminDashboard() {
           Manage all aspects of the Ajo365 platform
         </p>
       </div>
+
+      <LoadingWrapper 
+        isLoading={isLoading}
+        fallback={<div className="text-center py-8">Loading admin dashboard...</div>}
+      >
+        {error ? (
+          <div className='text-center py-8 text-red-600'>Error loading dashboard data</div>
+        ) : (
 
       <Tabs
         value={activeTab}
@@ -67,10 +61,10 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className='text-2xl font-bold'>
-                  {dashboardData?.userStats?.totalUsers || 0}
+                  {dashboardData?.users?.totalCount || 0}
                 </div>
                 <p className='text-muted-foreground text-xs'>
-                  {dashboardData?.userStats?.activeUsers || 0} active users
+                  {dashboardData?.users?.activeCount || 0} active users
                 </p>
               </CardContent>
             </Card>
@@ -84,13 +78,10 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className='text-2xl font-bold'>
-                  {dashboardData?.transactionStats?.totalTransactions || 0}
+                  {dashboardData?.transactions?.totalCount || 0}
                 </div>
                 <p className='text-muted-foreground text-xs'>
-                  ₦
-                  {(
-                    dashboardData?.transactionStats?.totalAmount || 0
-                  ).toLocaleString()}
+                  {formatCurrencyCompact(dashboardData?.transactions?.totalAmount || 0)}
                 </p>
               </CardContent>
             </Card>
@@ -104,14 +95,10 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className='text-2xl font-bold'>
-                  {dashboardData?.savingsStats?.totalSavings || 0}
+                  {dashboardData?.savings?.totalCount || 0}
                 </div>
                 <p className='text-muted-foreground text-xs'>
-                  ₦
-                  {(
-                    dashboardData?.savingsStats?.totalInterest || 0
-                  ).toLocaleString()}{' '}
-                  interest
+                  {formatCurrencyCompact(dashboardData?.savings?.totalAmount || 0)} total
                 </p>
               </CardContent>
             </Card>
@@ -125,7 +112,7 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className='text-2xl font-bold'>
-                  {dashboardData?.savingsStats?.activeSavings || 0}
+                  {dashboardData?.savings?.activeCount || 0}
                 </div>
                 <p className='text-muted-foreground text-xs'>
                   Currently active savings plans
@@ -218,6 +205,8 @@ export default function AdminDashboard() {
           </TabsContent>
         )}
       </Tabs>
+        )}
+      </LoadingWrapper>
     </div>
   )
 }

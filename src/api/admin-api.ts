@@ -1,315 +1,431 @@
-import {
-  AdminDashboardParamsType,
-  WithdrawalStatusType,
-  InterestCalculationTriggerType,
-  InterestPayoutTriggerType,
-  SavingsPlanCreateType,
-  SavingsPlanUpdateType,
-  FormFieldCreateType,
-  FormFieldUpdateType,
-  FormOptionCreateType,
-  FormOptionUpdateType,
-  FormOptionsBatchCreateType,
-  ConfigurationCreateType,
-  ConfigurationUpdateType,
-  AttributeCreateType,
-  AttributeUpdateType,
-  UserFormResponseCreateType,
-  UserFormResponseUpdateType,
-} from '@/schemas/adminSchemas'
 import axi from '@/lib/axios'
 
 // ======================= ADMIN AUTHENTICATION ===============================
 
-export const initiateAdminLogin = async (email: string) => {
-  const response = await axi.post('/admin/login/initiate', { email })
-  return response.data
-}
-
-export const verifyAdminLogin = async (email: string, otp: string) => {
-  const response = await axi.post('/admin/login', { email, otp })
+export const adminLogin = async (email: string, password: string) => {
+  const response = await axi.post('/admin/auth/login', { email, password })
   return response.data
 }
 
 // ======================= ADMIN DASHBOARD ===============================
 
-export const getAdminDashboard = async (
-  dateRange?: AdminDashboardParamsType
-) => {
-  const params = dateRange ? { ...dateRange } : {}
-  const response = await axi.get('/admin/dashboard', { params })
+export const getAdminDashboard = async () => {
+  const response = await axi.get('/admin/dashboard')
   return response.data
 }
 
-// ======================= ADMIN WITHDRAWAL MANAGEMENT ===============================
+// ======================= USER MANAGEMENT ===============================
 
-export const getAllWithdrawals = async (status?: WithdrawalStatusType) => {
-  const params = status ? { status } : {}
-  const response = await axi.get('/admin/withdrawals', { params })
+export interface GetUsersParams {
+  page?: number
+  limit?: number
+  search?: string
+  status?: string
+  verified?: boolean
+}
+
+export const getAllUsers = async (params: GetUsersParams = {}) => {
+  const queryParams = new URLSearchParams()
+  
+  if (params.page) queryParams.append('page', params.page.toString())
+  if (params.limit) queryParams.append('limit', params.limit.toString())
+  if (params.search) queryParams.append('search', params.search)
+  if (params.status) queryParams.append('status', params.status)
+  if (params.verified !== undefined) queryParams.append('verified', params.verified.toString())
+  
+  const response = await axi.get(`/admin/users?${queryParams.toString()}`)
   return response.data
 }
 
-export const getWithdrawalById = async (withdrawalId: string) => {
-  const response = await axi.get(`/admin/withdrawals/${withdrawalId}`)
+export const getUserById = async (userId: string) => {
+  const response = await axi.get(`/admin/users/${userId}`)
   return response.data
+}
+
+export interface UpdateUserData {
+  firstName?: string
+  lastName?: string
+  email?: string
+  phoneNumber?: string
+  dateOfBirth?: string
+  address?: string
+  city?: string
+  state?: string
+  country?: string
+  emailVerified?: boolean
+  phoneVerified?: boolean
+}
+
+export const updateUser = async (userId: string, userData: UpdateUserData) => {
+  const response = await axi.patch(`/admin/users/${userId}`, userData)
+  return response.data
+}
+
+export interface UpdateUserStatusData {
+  status: 'active' | 'suspended'
+  reason?: string
+}
+
+export const updateUserStatus = async (userId: string, statusData: UpdateUserStatusData) => {
+  const response = await axi.patch(`/admin/users/${userId}/status`, statusData)
+  return response.data
+}
+
+export const retriggerWalletCreation = async (userId: string) => {
+  const response = await axi.post(`/admin/users/${userId}/retrigger-wallet`)
+  return response.data
+}
+
+// ======================= TRANSACTION MANAGEMENT ===============================
+
+export interface GetTransactionsParams {
+  page?: number
+  limit?: number
+  type?: string
+  status?: string
+  startDate?: string
+  endDate?: string
+}
+
+export const getAllTransactions = async (params: GetTransactionsParams = {}) => {
+  const queryParams = new URLSearchParams()
+  
+  if (params.page) queryParams.append('page', params.page.toString())
+  if (params.limit) queryParams.append('limit', params.limit.toString())
+  if (params.type) queryParams.append('type', params.type)
+  if (params.status) queryParams.append('status', params.status)
+  if (params.startDate) queryParams.append('startDate', params.startDate)
+  if (params.endDate) queryParams.append('endDate', params.endDate)
+  
+  const response = await axi.get(`/admin/transactions?${queryParams.toString()}`)
+  return response.data
+}
+
+export const getTransactionById = async (transactionId: string) => {
+  const response = await axi.get(`/admin/transactions/${transactionId}`)
+  return response.data
+}
+
+// ======================= WITHDRAWAL MANAGEMENT ===============================
+
+export const getAllWithdrawals = async (status?: string) => {
+  const queryParams = new URLSearchParams()
+  
+  if (status) queryParams.append('status', status)
+  
+  const response = await axi.get(`/admin/withdrawals?${queryParams.toString()}`)
+  return response.data
+}
+
+export interface UpdateWithdrawalStatusData {
+  status: 'approved' | 'rejected'
+  reason?: string
+  adminNotes?: string
 }
 
 export const updateWithdrawalStatus = async (
-  withdrawalId: string,
-  status: 'approved' | 'rejected',
-  reason?: string,
-  adminNotes?: string
+  withdrawalId: string, 
+  statusData: UpdateWithdrawalStatusData
 ) => {
-  const response = await axi.patch(
-    `/admin/withdrawals/${withdrawalId}/status`,
-    {
-      status,
-      reason,
-      adminNotes,
-    }
-  )
+  const response = await axi.patch(`/admin/withdrawals/${withdrawalId}/status`, statusData)
   return response.data
 }
 
-// ======================= ADMIN SAVINGS MANAGEMENT ===============================
+export interface BulkWithdrawalActionData {
+  withdrawalIds: string[]
+  action: 'approve' | 'reject'
+  reason: string
+  processorReference?: string
+}
 
-export const triggerInterestCalculation = async (
-  payload?: InterestCalculationTriggerType
-) => {
-  const response = await axi.post(
-    '/savings/admin/trigger-interest-calculation',
-    payload || {}
-  )
+export const bulkWithdrawalAction = async (actionData: BulkWithdrawalActionData) => {
+  const response = await axi.post('/admin/withdrawals/bulk-action', actionData)
   return response.data
 }
 
-export const triggerInterestPayout = async (
-  payload?: InterestPayoutTriggerType
-) => {
-  const response = await axi.post(
-    '/savings/admin/trigger-interest-payout',
-    payload || {}
-  )
+// ======================= SAVINGS PLAN MANAGEMENT ===============================
+
+export interface GetSavingsParams {
+  page?: number
+  limit?: number
+  search?: string
+  is_visible?: boolean
+  is_enabled?: boolean
+}
+
+export const getAllSavings = async (params: GetSavingsParams = {}) => {
+  const queryParams = new URLSearchParams()
+  
+  if (params.page) queryParams.append('page', params.page.toString())
+  if (params.limit) queryParams.append('limit', params.limit.toString())
+  if (params.search) queryParams.append('search', params.search)
+  if (params.is_visible !== undefined) queryParams.append('is_visible', params.is_visible.toString())
+  if (params.is_enabled !== undefined) queryParams.append('is_enabled', params.is_enabled.toString())
+  
+  const response = await axi.get(`/admin/savings-plans?${queryParams.toString()}`)
   return response.data
 }
 
-// ======================= ADMIN SAVINGS PLAN MANAGEMENT ===============================
-
-export const getAllSavingsPlans = async () => {
-  const response = await axi.get('/savings-plan')
+export const getSavingById = async (savingId: string) => {
+  const response = await axi.get(`/admin/savings-plans/${savingId}`)
   return response.data
 }
 
-export const getActiveSavingsPlans = async () => {
-  const response = await axi.get('/savings-plan/active')
+export interface CreateSavingData {
+  name: string
+  slug: string
+  icon?: string
+  color: string
+  bgColor: string
+  description: string
+  is_visible: boolean
+  is_enabled: boolean
+  config: {
+    interest_rate: string
+    minimum_days: number
+    maximum_days?: number
+    interest_style: 'simple' | 'compound'
+    allow_break: boolean
+    minimum_percentage_amount: number
+    user_can_auto_save: boolean
+    break_penalty: string
+    allow_interest_withdrawal: boolean
+    use_main_wallet_balance: boolean
+    is_group_savings: boolean
+    keep_interest_on_break: boolean
+    keep_interest_record: boolean
+  }
+}
+
+export const createSaving = async (savingData: CreateSavingData) => {
+  const response = await axi.post('/admin/savings-plans', savingData)
   return response.data
 }
 
-export const getSavingsPlanById = async (planId: string) => {
-  const response = await axi.get(`/savings-plan/${planId}`)
+export const updateSaving = async (savingId: string, savingData: Partial<CreateSavingData>) => {
+  const response = await axi.patch(`/admin/savings-plans/${savingId}`, savingData)
   return response.data
 }
 
-export const createSavingsPlan = async (planData: SavingsPlanCreateType) => {
-  const response = await axi.post('/savings-plan', planData)
+export const deleteSaving = async (savingId: string) => {
+  const response = await axi.delete(`/admin/savings/${savingId}`)
   return response.data
 }
 
-export const updateSavingsPlan = async (
-  planId: string,
-  planData: SavingsPlanUpdateType
-) => {
-  const response = await axi.patch(`/savings-plan/${planId}`, planData)
+// ======================= COMPREHENSIVE SAVINGS MANAGEMENT ===============================
+
+export interface SavingsQueryParams {
+  page?: number
+  limit?: number
+  search?: string
+  status?: 'active' | 'inactive' | 'completed' | 'cancelled'
+  startDate?: string
+  endDate?: string
+  sortBy?: 'createdAt' | 'balance' | 'maturityDate'
+  sortOrder?: 'ASC' | 'DESC'
+}
+
+export interface UserBasicInfo {
+  id: string
+  firstName: string
+  lastName: string
+  email: string
+}
+
+export interface SavingBasicInfo {
+  id: string
+  balance: number
+  type: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface SavingsSummary {
+  totalBalance: number
+  totalSavings: number
+  activeSavings: number
+  inactiveSavings: number
+  averageBalance: number
+}
+
+export interface PaginationMeta {
+  page: number
+  limit: number
+  totalPages: number
+  totalItems: number
+}
+
+// Business Locks
+export interface AdminBusinessLockDto {
+  id: string
+  planTitle: string
+  businessName: string
+  businessType: string
+  targetAmount: string
+  lockAmount: string
+  lockDuration: string
+  lockStartDate: string
+  lockEndDate: string
+  lockStatus: string
+  penaltyPercentage: string
+  user: UserBasicInfo
+  saving: SavingBasicInfo
+  createdAt: string
+  updatedAt: string
+}
+
+export interface BusinessLocksResponse {
+  data: AdminBusinessLockDto[]
+  meta: PaginationMeta
+  summary: SavingsSummary
+}
+
+export const getBusinessLocks = async (params: SavingsQueryParams = {}) => {
+  const queryParams = new URLSearchParams()
+  
+  if (params.page) queryParams.append('page', params.page.toString())
+  if (params.limit) queryParams.append('limit', params.limit.toString())
+  if (params.search) queryParams.append('search', params.search)
+  if (params.status) queryParams.append('status', params.status)
+  if (params.startDate) queryParams.append('startDate', params.startDate)
+  if (params.endDate) queryParams.append('endDate', params.endDate)
+  if (params.sortBy) queryParams.append('sortBy', params.sortBy)
+  if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder)
+  
+  const response = await axi.get(`/admin/business-locks?${queryParams.toString()}`)
   return response.data
 }
 
-export const deleteSavingsPlan = async (planId: string) => {
-  const response = await axi.delete(`/savings-plan/${planId}`)
+// Business Targets
+export interface AdminBusinessTargetDto {
+  id: string
+  targetAmount: number
+  targetDate: string
+  currentAmount: number
+  interestRate: number
+  user: UserBasicInfo
+  saving: SavingBasicInfo
+}
+
+export interface BusinessTargetsResponse {
+  data: AdminBusinessTargetDto[]
+  meta: PaginationMeta
+  summary: SavingsSummary
+}
+
+export const getBusinessTargets = async (params: SavingsQueryParams = {}) => {
+  const queryParams = new URLSearchParams()
+  
+  if (params.page) queryParams.append('page', params.page.toString())
+  if (params.limit) queryParams.append('limit', params.limit.toString())
+  if (params.search) queryParams.append('search', params.search)
+  if (params.status) queryParams.append('status', params.status)
+  if (params.startDate) queryParams.append('startDate', params.startDate)
+  if (params.endDate) queryParams.append('endDate', params.endDate)
+  if (params.sortBy) queryParams.append('sortBy', params.sortBy)
+  if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder)
+  
+  const response = await axi.get(`/admin/business-targets?${queryParams.toString()}`)
   return response.data
 }
 
-// ======================= ADMIN FORM MANAGEMENT ===============================
+// Group Savings
+export interface AdminGroupSavingDto {
+  id: string
+  groupName: string
+  contributionAmount: number
+  minMembers: number
+  maxMembers: number
+  startDate: string
+  endDate: string
+  payoutFrequency: string
+  isActive: boolean
+  user: UserBasicInfo
+  saving: SavingBasicInfo
+}
 
-export const getPlanForms = async (planId: string) => {
-  const response = await axi.get(`/savings-plan/forms/plan/${planId}`)
+export interface GroupSavingsResponse {
+  data: AdminGroupSavingDto[]
+  meta: PaginationMeta
+  summary: SavingsSummary
+}
+
+export const getGroupSavings = async (params: SavingsQueryParams = {}) => {
+  const queryParams = new URLSearchParams()
+  
+  if (params.page) queryParams.append('page', params.page.toString())
+  if (params.limit) queryParams.append('limit', params.limit.toString())
+  if (params.search) queryParams.append('search', params.search)
+  if (params.status) queryParams.append('status', params.status)
+  if (params.startDate) queryParams.append('startDate', params.startDate)
+  if (params.endDate) queryParams.append('endDate', params.endDate)
+  if (params.sortBy) queryParams.append('sortBy', params.sortBy)
+  if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder)
+  
+  const response = await axi.get(`/admin/group-savings?${queryParams.toString()}`)
   return response.data
 }
 
-export const getFormFieldById = async (fieldId: string) => {
-  const response = await axi.get(`/savings-plan/forms/${fieldId}`)
+// Locked Savings
+export interface AdminLockedSavingDto {
+  id: string
+  lockDuration: number
+  maturityDate: string
+  interestRate: number
+  user: UserBasicInfo
+  saving: SavingBasicInfo
+}
+
+export interface LockedSavingsResponse {
+  data: AdminLockedSavingDto[]
+  meta: PaginationMeta
+  summary: SavingsSummary
+}
+
+export const getLockedSavings = async (params: SavingsQueryParams = {}) => {
+  const queryParams = new URLSearchParams()
+  
+  if (params.page) queryParams.append('page', params.page.toString())
+  if (params.limit) queryParams.append('limit', params.limit.toString())
+  if (params.search) queryParams.append('search', params.search)
+  if (params.status) queryParams.append('status', params.status)
+  if (params.startDate) queryParams.append('startDate', params.startDate)
+  if (params.endDate) queryParams.append('endDate', params.endDate)
+  if (params.sortBy) queryParams.append('sortBy', params.sortBy)
+  if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder)
+  
+  const response = await axi.get(`/admin/locked-savings?${queryParams.toString()}`)
   return response.data
 }
 
-export const createFormField = async (fieldData: FormFieldCreateType) => {
-  const response = await axi.post('/savings-plan/forms', fieldData)
-  return response.data
+// Target Savings
+export interface AdminTargetSavingDto {
+  id: string
+  targetAmount: number
+  targetDate: string
+  currentAmount: number
+  user: UserBasicInfo
+  saving: SavingBasicInfo
 }
 
-export const updateFormField = async (
-  fieldId: string,
-  fieldData: FormFieldUpdateType
-) => {
-  const response = await axi.patch(`/savings-plan/forms/${fieldId}`, fieldData)
-  return response.data
+export interface TargetSavingsResponse {
+  data: AdminTargetSavingDto[]
+  meta: PaginationMeta
+  summary: SavingsSummary
 }
 
-export const deleteFormField = async (fieldId: string) => {
-  const response = await axi.delete(`/savings-plan/forms/${fieldId}`)
-  return response.data
-}
-
-// ======================= ADMIN FORM SELECT OPTIONS ===============================
-
-export const getFormOptions = async (formId: string) => {
-  const response = await axi.get(
-    `/savings-plan/form-select-options/form/${formId}`
-  )
-  return response.data
-}
-
-export const getFormOptionById = async (optionId: string) => {
-  const response = await axi.get(
-    `/savings-plan/form-select-options/${optionId}`
-  )
-  return response.data
-}
-
-export const createFormOption = async (optionData: FormOptionCreateType) => {
-  const response = await axi.post(
-    '/savings-plan/form-select-options',
-    optionData
-  )
-  return response.data
-}
-
-export const createMultipleFormOptions = async (
-  formId: string,
-  options: FormOptionsBatchCreateType['options']
-) => {
-  const response = await axi.post(
-    `/savings-plan/form-select-options/batch/${formId}`,
-    { options }
-  )
-  return response.data
-}
-
-export const updateFormOption = async (
-  optionId: string,
-  optionData: FormOptionUpdateType
-) => {
-  const response = await axi.patch(
-    `/savings-plan/form-select-options/${optionId}`,
-    optionData
-  )
-  return response.data
-}
-
-export const deleteFormOption = async (optionId: string) => {
-  const response = await axi.delete(
-    `/savings-plan/form-select-options/${optionId}`
-  )
-  return response.data
-}
-
-// ======================= ADMIN CONFIGURATION MANAGEMENT ===============================
-
-export const getAllConfigurations = async () => {
-  const response = await axi.get('/savings-plan/configs')
-  return response.data
-}
-
-export const getConfigurationById = async (configId: string) => {
-  const response = await axi.get(`/savings-plan/configs/${configId}`)
-  return response.data
-}
-
-export const createConfiguration = async (
-  configData: ConfigurationCreateType
-) => {
-  const response = await axi.post('/savings-plan/configs', configData)
-  return response.data
-}
-
-export const updateConfiguration = async (
-  configId: string,
-  configData: ConfigurationUpdateType
-) => {
-  const response = await axi.patch(
-    `/savings-plan/configs/${configId}`,
-    configData
-  )
-  return response.data
-}
-
-export const deleteConfiguration = async (configId: string) => {
-  const response = await axi.delete(`/savings-plan/configs/${configId}`)
-  return response.data
-}
-
-// ======================= ADMIN ATTRIBUTES MANAGEMENT ===============================
-
-export const getAllAttributes = async () => {
-  const response = await axi.get('/savings-plan/attributes')
-  return response.data
-}
-
-export const getAttributeById = async (attributeId: string) => {
-  const response = await axi.get(`/savings-plan/attributes/${attributeId}`)
-  return response.data
-}
-
-export const createAttribute = async (attributeData: AttributeCreateType) => {
-  const response = await axi.post('/savings-plan/attributes', attributeData)
-  return response.data
-}
-
-export const updateAttribute = async (
-  attributeId: string,
-  attributeData: AttributeUpdateType
-) => {
-  const response = await axi.patch(
-    `/savings-plan/attributes/${attributeId}`,
-    attributeData
-  )
-  return response.data
-}
-
-export const deleteAttribute = async (attributeId: string) => {
-  const response = await axi.delete(`/savings-plan/attributes/${attributeId}`)
-  return response.data
-}
-
-// ======================= ADMIN USER FORM RESPONSES ===============================
-
-export const getAllUserFormResponses = async () => {
-  const response = await axi.get('/user-form-responses')
-  return response.data
-}
-
-export const getUserFormResponseById = async (responseId: string) => {
-  const response = await axi.get(`/user-form-responses/${responseId}`)
-  return response.data
-}
-
-export const createUserFormResponse = async (
-  responseData: UserFormResponseCreateType
-) => {
-  const response = await axi.post('/user-form-responses', responseData)
-  return response.data
-}
-
-export const updateUserFormResponse = async (
-  responseId: string,
-  responseData: UserFormResponseUpdateType
-) => {
-  const response = await axi.patch(
-    `/user-form-responses/${responseId}`,
-    responseData
-  )
-  return response.data
-}
-
-export const deleteUserFormResponse = async (responseId: string) => {
-  const response = await axi.delete(`/user-form-responses/${responseId}`)
+export const getTargetSavings = async (params: SavingsQueryParams = {}) => {
+  const queryParams = new URLSearchParams()
+  
+  if (params.page) queryParams.append('page', params.page.toString())
+  if (params.limit) queryParams.append('limit', params.limit.toString())
+  if (params.search) queryParams.append('search', params.search)
+  if (params.status) queryParams.append('status', params.status)
+  if (params.startDate) queryParams.append('startDate', params.startDate)
+  if (params.endDate) queryParams.append('endDate', params.endDate)
+  if (params.sortBy) queryParams.append('sortBy', params.sortBy)
+  if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder)
+  
+  const response = await axi.get(`/admin/target-savings?${queryParams.toString()}`)
   return response.data
 }

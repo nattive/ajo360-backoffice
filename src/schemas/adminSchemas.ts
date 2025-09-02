@@ -2,287 +2,302 @@ import { z } from 'zod'
 
 // ======================= ADMIN AUTHENTICATION SCHEMAS ===============================
 
-export const AdminLoginInitiateSchema = z.object({
+export const AdminLoginSchema = z.object({
   email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
 })
 
-export const AdminLoginVerifySchema = z.object({
-  email: z.string().email('Invalid email address'),
-  otp: z.string().length(6, 'OTP must be 6 digits'),
+export type AdminLoginType = z.infer<typeof AdminLoginSchema>
+
+// ======================= ADMIN RESPONSE SCHEMAS ===============================
+
+export const AdminSchema = z.object({
+  id: z.string(),
+  email: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  role: z.string(),
+  isActive: z.boolean(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 })
 
-export type AdminLoginInitiateType = z.infer<typeof AdminLoginInitiateSchema>
-export type AdminLoginVerifyType = z.infer<typeof AdminLoginVerifySchema>
-
-// ======================= ADMIN DASHBOARD SCHEMAS ===============================
-
-export const AdminDashboardParamsSchema = z.object({
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
+export const AdminLoginResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  data: z.object({
+    accessToken: z.string(),
+    refreshToken: z.string(),
+    admin: AdminSchema,
+  }),
 })
 
-export type AdminDashboardParamsType = z.infer<
-  typeof AdminDashboardParamsSchema
->
+// ======================= DASHBOARD SCHEMAS ===============================
 
-// ======================= ADMIN WITHDRAWAL SCHEMAS ===============================
+export const DashboardDataSchema = z.object({
+  withdrawals: z.object({
+    totalAmount: z.number(),
+    totalCount: z.number(),
+    pendingAmount: z.number(),
+    pendingCount: z.number(),
+    completedAmount: z.number(),
+    completedCount: z.number(),
+  }),
+  savings: z.object({
+    totalAmount: z.number(),
+    totalCount: z.number(),
+    activeAmount: z.number(),
+    activeCount: z.number(),
+    completedAmount: z.number(),
+    completedCount: z.number(),
+  }),
+  users: z.object({
+    totalCount: z.number(),
+    verifiedCount: z.number(),
+    unverifiedCount: z.number(),
+    activeCount: z.number(),
+    suspendedCount: z.number(),
+  }),
+  transactions: z.object({
+    totalAmount: z.number(),
+    totalCount: z.number(),
+    creditAmount: z.number(),
+    creditCount: z.number(),
+    debitAmount: z.number(),
+    debitCount: z.number(),
+  }),
+  revenue: z.object({
+    totalRevenue: z.number(),
+    monthlyRevenue: z.number(),
+    dailyRevenue: z.number(),
+  }),
+  systemStatus: z.object({
+    isHealthy: z.boolean(),
+    lastUpdated: z.string(),
+  }),
+})
 
-export const WithdrawalStatusSchema = z.enum([
-  'pending',
-  'approved',
-  'rejected',
-  'completed',
-])
+export const DashboardResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  data: DashboardDataSchema,
+})
 
-export const WithdrawalUpdateSchema = z.object({
+// ======================= USER SCHEMAS ===============================
+
+export const WalletSchema = z.object({
+  id: z.string(),
+  balance: z.number(),
+  accountNumber: z.string(),
+  accountName: z.string(),
+  bankName: z.string(),
+  isActive: z.boolean().optional(),
+  createdAt: z.string().optional(),
+})
+
+export const UserStatisticsSchema = z.object({
+  totalSavings: z.number(),
+  totalSavingsBalance: z.union([z.number(), z.string()]),
+  totalTransactions: z.number(),
+  totalDeposited: z.number(),
+  totalWithdrawn: z.number(),
+  activeSavingsCount: z.number(),
+  lastLoginAt: z.string().nullable(),
+  accountAge: z.number(),
+})
+
+export const RecentTransactionSchema = z.object({
+  id: z.string(),
+  amount: z.number(),
+  type: z.string(),
+  status: z.string(),
+  description: z.string(),
+  createdAt: z.string(),
+})
+
+export const UserSchema = z.object({
+  id: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  otherName: z.string().nullable().optional(),
+  email: z.string(),
+  uniqueCode: z.string().optional(),
+  phoneNumber: z.string(),
+  bvn: z.string().nullable().optional(),
+  dateOfBirth: z.string().nullable().optional(),
+  profilePicture: z.string().nullable().optional(),
+  address: z.string().nullable().optional(),
+  state: z.string().nullable().optional(),
+  country: z.string().nullable().optional(),
+  emailVerified: z.boolean(),
+  phoneNumberVerified: z.boolean(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  wallet: WalletSchema.nullable().optional(),
+  bankAccounts: z.array(z.unknown()).optional(),
+  statistics: UserStatisticsSchema.optional(),
+})
+
+export const UsersMetadataSchema = z.object({
+  page: z.number(),
+  limit: z.number(),
+  total: z.number(),
+  totalPages: z.number(),
+  hasNext: z.boolean(),
+  hasPrev: z.boolean(),
+})
+
+export const UsersSummarySchema = z.object({
+  totalUsers: z.number(),
+  verifiedUsers: z.number(),
+  totalSavingsBalance: z.number(),
+})
+
+export const UsersResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  data: z.array(UserSchema),
+  metadata: UsersMetadataSchema,
+  summary: UsersSummarySchema,
+})
+
+export const UserDetailResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  data: UserSchema,
+})
+
+export const UpdateUserSchema = z.object({
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  email: z.string().email().optional(),
+  phoneNumber: z.string().optional(),
+  dateOfBirth: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  country: z.string().optional(),
+  emailVerified: z.boolean().optional(),
+  phoneVerified: z.boolean().optional(),
+})
+
+export const UpdateUserStatusSchema = z.object({
+  status: z.enum(['active', 'suspended']),
+  reason: z.string().optional(),
+})
+
+// ======================= TRANSACTION SCHEMAS ===============================
+
+export const TransactionUserSchema = z.object({
+  id: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string(),
+  phoneNumber: z.string().optional(),
+})
+
+export const TransactionWalletSchema = z.object({
+  id: z.string(),
+  balance: z.number().optional(),
+  accountNumber: z.string(),
+  accountName: z.string(),
+  bankName: z.string().optional(),
+})
+
+export const TransactionLogSchema = z.object({
+  id: z.string(),
+  action: z.string(),
+  details: z.string(),
+  createdAt: z.string(),
+})
+
+export const TransactionSchema = z.object({
+  id: z.string(),
+  amount: z.number(),
+  type: z.string(),
+  status: z.string(),
+  description: z.string(),
+  reference: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  user: TransactionUserSchema,
+  wallet: TransactionWalletSchema,
+  logs: z.array(TransactionLogSchema).optional(),
+})
+
+export const TransactionsResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  data: z.array(TransactionSchema),
+  metadata: UsersMetadataSchema, // Same pagination structure
+})
+
+export const TransactionDetailResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  data: TransactionSchema,
+})
+
+// ======================= WITHDRAWAL SCHEMAS ===============================
+
+export const BankAccountSchema = z.object({
+  id: z.string(),
+  accountNumber: z.string(),
+  accountName: z.string(),
+  bankName: z.string(),
+  bankCode: z.string().optional(),
+})
+
+export const WithdrawalSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  amount: z.number(),
+  status: z.enum(['pending', 'approved', 'rejected', 'completed']),
+  reason: z.string().nullable().optional(),
+  adminNotes: z.string().nullable().optional(),
+  bankAccount: BankAccountSchema.nullable().optional(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+})
+
+export const WithdrawalsResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  data: z.array(WithdrawalSchema),
+})
+
+export const UpdateWithdrawalStatusSchema = z.object({
   status: z.enum(['approved', 'rejected']),
   reason: z.string().optional(),
   adminNotes: z.string().optional(),
 })
 
-export type WithdrawalStatusType = z.infer<typeof WithdrawalStatusSchema>
-export type WithdrawalUpdateType = z.infer<typeof WithdrawalUpdateSchema>
+// ======================= GENERIC RESPONSE SCHEMAS ===============================
 
-// ======================= ADMIN SAVINGS MANAGEMENT SCHEMAS ===============================
-
-export const InterestCalculationTriggerSchema = z.object({
-  forceRecalculation: z.boolean().optional(),
-  planIds: z.array(z.string()).optional(),
+export const SuccessResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
 })
 
-export const InterestPayoutTriggerSchema = z.object({
-  payoutDate: z.string().optional(),
-  planIds: z.array(z.string()).optional(),
-  dryRun: z.boolean().optional(),
-})
+// ======================= TYPE EXPORTS ===============================
 
-// ======================= ADMIN SAVINGS PLAN SCHEMAS ===============================
-
-export const SavingsPlanCreateSchema = z.object({
-  name: z.string().min(1, 'Plan name is required'),
-  description: z.string().optional(),
-  interestRate: z.number().min(0, 'Interest rate must be positive'),
-  minimumAmount: z.number().min(0, 'Minimum amount must be positive'),
-  maximumAmount: z.number().min(0, 'Maximum amount must be positive'),
-  duration: z.number().min(1, 'Duration must be at least 1'),
-  durationUnit: z.string().optional(),
-  isActive: z.boolean().optional(),
-  features: z.array(z.string()).optional(),
-  terms: z.string().optional(),
-  eligibilityCriteria: z
-    .object({
-      minimumAge: z.number().optional(),
-      kycRequired: z.boolean().optional(),
-      bvnRequired: z.boolean().optional(),
-    })
-    .optional(),
-})
-
-export const SavingsPlanUpdateSchema = SavingsPlanCreateSchema.partial()
-
-export type InterestCalculationTriggerType = z.infer<
-  typeof InterestCalculationTriggerSchema
->
-export type InterestPayoutTriggerType = z.infer<
-  typeof InterestPayoutTriggerSchema
->
-export type SavingsPlanCreateType = z.infer<typeof SavingsPlanCreateSchema>
-export type SavingsPlanUpdateType = z.infer<typeof SavingsPlanUpdateSchema>
-
-// ======================= ADMIN FORM FIELD SCHEMAS ===============================
-
-export const FormFieldTypeSchema = z.enum([
-  'text',
-  'number',
-  'select',
-  'date',
-  'email',
-  'phone',
-  'textarea',
-])
-
-export const FormFieldValidationSchema = z.object({
-  required: z.boolean().optional(),
-  minLength: z.number().optional(),
-  maxLength: z.number().optional(),
-  pattern: z.string().optional(),
-  min: z.number().optional(),
-  max: z.number().optional(),
-})
-
-export const FormFieldCreateSchema = z.object({
-  planId: z.string().min(1, 'Plan ID is required'),
-  fieldName: z.string().min(1, 'Field name is required'),
-  fieldLabel: z.string().min(1, 'Field label is required'),
-  fieldType: FormFieldTypeSchema,
-  isRequired: z.boolean().optional(),
-  displayOrder: z.number().optional(),
-  validationRules: z
-    .object({
-      minLength: z.number().optional(),
-      maxLength: z.number().optional(),
-      pattern: z.string().optional(),
-      min: z.number().optional(),
-      max: z.number().optional(),
-    })
-    .optional(),
-  options: z.array(z.string()).optional(),
-  placeholder: z.string().optional(),
-})
-
-export const FormFieldUpdateSchema = FormFieldCreateSchema.partial()
-
-export type FormFieldType = z.infer<typeof FormFieldTypeSchema>
-export type FormFieldValidationType = z.infer<typeof FormFieldValidationSchema>
-export type FormFieldCreateType = z.infer<typeof FormFieldCreateSchema>
-export type FormFieldUpdateType = z.infer<typeof FormFieldUpdateSchema>
-
-// ======================= ADMIN FORM SELECT OPTIONS SCHEMAS ===============================
-
-export const FormOptionCreateSchema = z.object({
-  formId: z.string().min(1, 'Form ID is required'),
-  value: z.string().min(1, 'Option value is required'),
-  label: z.string().min(1, 'Option label is required'),
-  displayOrder: z.number().optional(),
-  isActive: z.boolean().optional(),
-})
-
-export const FormOptionUpdateSchema = FormOptionCreateSchema.partial()
-
-export const FormOptionsBatchCreateSchema = z.object({
-  options: z.array(FormOptionCreateSchema),
-})
-
-export type FormOptionCreateType = z.infer<typeof FormOptionCreateSchema>
-export type FormOptionUpdateType = z.infer<typeof FormOptionUpdateSchema>
-export type FormOptionsBatchCreateType = z.infer<
-  typeof FormOptionsBatchCreateSchema
->
-
-// ======================= ADMIN CONFIGURATION SCHEMAS ===============================
-
-export const ConfigurationCreateSchema = z.object({
-  planId: z.string().min(1, 'Plan ID is required'),
-  configName: z.string().min(1, 'Configuration name is required'),
-  configType: z.string().min(1, 'Configuration type is required'),
-  settings: z
-    .object({
-      calculationFrequency: z.string().optional(),
-      compoundingType: z.string().optional(),
-      minimumBalanceForInterest: z.number().optional(),
-      interestPayoutFrequency: z.string().optional(),
-      earlyWithdrawalPenalty: z.number().optional(),
-      maintenanceFee: z.number().optional(),
-      transactionFee: z.number().optional(),
-    })
-    .optional(),
-  isActive: z.boolean().optional(),
-  effectiveDate: z.string().optional(),
-  expiryDate: z.string().optional(),
-})
-
-export const ConfigurationUpdateSchema = ConfigurationCreateSchema.partial()
-
-export type ConfigurationCreateType = z.infer<typeof ConfigurationCreateSchema>
-export type ConfigurationUpdateType = z.infer<typeof ConfigurationUpdateSchema>
-
-// ======================= ADMIN ATTRIBUTES SCHEMAS ===============================
-
-export const AttributeTypeSchema = z.enum([
-  'string',
-  'number',
-  'boolean',
-  'array',
-])
-
-export const AttributeCreateSchema = z.object({
-  name: z.string().min(1, 'Attribute name is required'),
-  displayName: z.string().min(1, 'Display name is required'),
-  type: AttributeTypeSchema,
-  description: z.string().optional(),
-  possibleValues: z.array(z.string()).optional(),
-  isRequired: z.boolean().optional(),
-  isActive: z.boolean().optional(),
-})
-
-export const AttributeUpdateSchema = AttributeCreateSchema.partial()
-
-export type AttributeType = z.infer<typeof AttributeTypeSchema>
-export type AttributeCreateType = z.infer<typeof AttributeCreateSchema>
-export type AttributeUpdateType = z.infer<typeof AttributeUpdateSchema>
-
-// ======================= ADMIN USER FORM RESPONSE SCHEMAS ===============================
-
-export const UserFormResponseCreateSchema = z.object({
-  userId: z.string().min(1, 'User ID is required'),
-  planId: z.string().min(1, 'Plan ID is required'),
-  formId: z.string().min(1, 'Form ID is required'),
-  responses: z.record(z.unknown()),
-  submittedAt: z.string().optional(),
-})
-
-export const UserFormResponseUpdateSchema =
-  UserFormResponseCreateSchema.partial()
-
-export type UserFormResponseCreateType = z.infer<
-  typeof UserFormResponseCreateSchema
->
-export type UserFormResponseUpdateType = z.infer<
-  typeof UserFormResponseUpdateSchema
->
-
-// ======================= RESPONSE SCHEMAS ===============================
-
-export const AdminLoginResponseSchema = z.object({
-  accessToken: z.string(),
-  refreshToken: z.string(),
-  admin: z.object({
-    id: z.string(),
-    email: z.string(),
-    firstName: z.string(),
-    lastName: z.string(),
-    otherName: z.string().nullable(),
-    phoneNumber: z.string().nullable(),
-    profilePicture: z.string().nullable(),
-    lastLoginAt: z.string(),
-    permissions: z.array(z.string()),
-  }),
-})
-
-export const DashboardResponseSchema = z.object({
-  userStats: z.object({
-    totalUsers: z.number(),
-    activeUsers: z.number(),
-    newUsers: z.number(),
-  }),
-  transactionStats: z.object({
-    totalTransactions: z.number(),
-    totalAmount: z.number(),
-    pendingTransactions: z.number(),
-  }),
-  savingsStats: z.object({
-    totalSavings: z.number(),
-    activeSavings: z.number(),
-    totalInterest: z.number(),
-  }),
-})
-
-export const WithdrawalResponseSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  amount: z.number(),
-  status: WithdrawalStatusSchema,
-  bankAccount: z.object({
-    accountNumber: z.string(),
-    accountName: z.string(),
-    bankName: z.string(),
-  }),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-  reason: z.string().optional(),
-  adminNotes: z.string().optional(),
-})
-
+export type AdminType = z.infer<typeof AdminSchema>
 export type AdminLoginResponseType = z.infer<typeof AdminLoginResponseSchema>
+export type DashboardDataType = z.infer<typeof DashboardDataSchema>
 export type DashboardResponseType = z.infer<typeof DashboardResponseSchema>
-export type WithdrawalResponseType = z.infer<typeof WithdrawalResponseSchema>
+export type UserType = z.infer<typeof UserSchema>
+export type WalletType = z.infer<typeof WalletSchema>
+export type UsersResponseType = z.infer<typeof UsersResponseSchema>
+export type UserDetailResponseType = z.infer<typeof UserDetailResponseSchema>
+export type UpdateUserType = z.infer<typeof UpdateUserSchema>
+export type UpdateUserStatusType = z.infer<typeof UpdateUserStatusSchema>
+export type TransactionType = z.infer<typeof TransactionSchema>
+export type TransactionsResponseType = z.infer<typeof TransactionsResponseSchema>
+export type TransactionDetailResponseType = z.infer<typeof TransactionDetailResponseSchema>
+export type BankAccountType = z.infer<typeof BankAccountSchema>
+export type WithdrawalType = z.infer<typeof WithdrawalSchema>
+export type WithdrawalsResponseType = z.infer<typeof WithdrawalsResponseSchema>
+export type UpdateWithdrawalStatusType = z.infer<typeof UpdateWithdrawalStatusSchema>
+export type WithdrawalStatusType = 'pending' | 'approved' | 'rejected' | 'completed'
+export type WithdrawalResponseType = WithdrawalType
+export type SuccessResponseType = z.infer<typeof SuccessResponseSchema>

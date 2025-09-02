@@ -1,55 +1,104 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
-import {
-  allSavings,
-  createSavings,
-  deleteSavings,
-  updateSavings,
-} from '@/api/savings-api'
+import { 
+  getAllSavings, 
+  getSavingById, 
+  createSaving, 
+  updateSaving, 
+  deleteSaving,
+  GetSavingsParams,
+  CreateSavingData,
+  // Comprehensive savings endpoints
+  getBusinessLocks,
+  getBusinessTargets,
+  getGroupSavings,
+  getLockedSavings,
+  getTargetSavings,
+  SavingsQueryParams
+} from '@/api/admin-api'
 
-export const useGetSavings = () => {
+export const useGetSavings = (params: GetSavingsParams = {}) => {
   return useQuery({
-    queryKey: ['allSavings'],
-    queryFn: async () => {
-      const data = await allSavings()
-      return data
+    queryKey: ['savings', params],
+    queryFn: () => getAllSavings(params),
+  })
+}
+
+export const useGetSavingById = (savingId: string) => {
+  return useQuery({
+    queryKey: ['savings', savingId],
+    queryFn: () => getSavingById(savingId),
+    enabled: !!savingId,
+  })
+}
+
+export const useCreateSaving = () => {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: (savingData: CreateSavingData) => createSaving(savingData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['savings'] })
     },
   })
 }
 
-export const useCreateSavings = () => {
+export const useUpdateSaving = () => {
   const queryClient = useQueryClient()
-
+  
   return useMutation({
-    mutationFn: createSavings,
-    onSuccess: () => {
-      // Refresh allSavings list after creating
-      toast.success('Savings created successfully')
-      queryClient.invalidateQueries({ queryKey: ['allSavings'] })
+    mutationFn: ({ savingId, savingData }: { savingId: string; savingData: Partial<CreateSavingData> }) => 
+      updateSaving(savingId, savingData),
+    onSuccess: (_, { savingId }) => {
+      queryClient.invalidateQueries({ queryKey: ['savings'] })
+      queryClient.invalidateQueries({ queryKey: ['savings', savingId] })
     },
   })
 }
 
-export const useUpdateSavings = () => {
+export const useDeleteSaving = () => {
   const queryClient = useQueryClient()
-
+  
   return useMutation({
-    mutationFn: updateSavings,
+    mutationFn: (savingId: string) => deleteSaving(savingId),
     onSuccess: () => {
-      toast.success('Savings updated successfully')
-      queryClient.invalidateQueries({ queryKey: ['allSavings'] })
+      queryClient.invalidateQueries({ queryKey: ['savings'] })
     },
   })
 }
 
-export const useDeleteSavings = () => {
-  const queryClient = useQueryClient()
+// ======================= COMPREHENSIVE SAVINGS HOOKS ===============================
 
-  return useMutation({
-    mutationFn: deleteSavings,
-    onSuccess: () => {
-      toast.success('Savings deleted successfully')
-      queryClient.invalidateQueries({ queryKey: ['allSavings'] })
-    },
+export const useGetBusinessLocks = (params: SavingsQueryParams = {}) => {
+  return useQuery({
+    queryKey: ['business-locks', params],
+    queryFn: () => getBusinessLocks(params),
+  })
+}
+
+export const useGetBusinessTargets = (params: SavingsQueryParams = {}) => {
+  return useQuery({
+    queryKey: ['business-targets', params],
+    queryFn: () => getBusinessTargets(params),
+  })
+}
+
+export const useGetGroupSavings = (params: SavingsQueryParams = {}) => {
+  return useQuery({
+    queryKey: ['group-savings', params],
+    queryFn: () => getGroupSavings(params),
+  })
+}
+
+export const useGetLockedSavings = (params: SavingsQueryParams = {}) => {
+  return useQuery({
+    queryKey: ['locked-savings', params],
+    queryFn: () => getLockedSavings(params),
+  })
+}
+
+export const useGetTargetSavings = (params: SavingsQueryParams = {}) => {
+  return useQuery({
+    queryKey: ['target-savings', params],
+    queryFn: () => getTargetSavings(params),
   })
 }

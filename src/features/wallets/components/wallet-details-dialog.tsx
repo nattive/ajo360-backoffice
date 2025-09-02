@@ -12,6 +12,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+import { formatCurrency } from '@/lib/currency'
 
 interface WalletDetailsDialogProps {
   isOpen: boolean
@@ -34,11 +35,7 @@ export function WalletDetailsDialog({
 }: WalletDetailsDialogProps) {
   if (!wallet) return null
 
-  const formatCurrency = (value: string) =>
-  `${Number(value).toLocaleString(undefined, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`
+
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>

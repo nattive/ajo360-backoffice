@@ -2,15 +2,13 @@ import {
   // IconBarrierBlock,
   // IconBrowserCheck,
   // IconBug,
-  IconChecklist,
   // IconError404,
-  // IconHelp,
+  IconHelp,
   IconLayoutDashboard,
   // IconLock,
   // IconLockAccess,
   // IconMessages,
   // IconNotification,
-  IconPackages,
   // IconPalette,
   // IconServerOff,
   // IconSettings,
@@ -18,31 +16,24 @@ import {
   // IconUserCog,
   // IconUserOff,
   IconUsers,
+  IconCreditCard,
+  IconWallet,
 } from '@tabler/icons-react'
-import { AudioWaveform, Command, GalleryVerticalEnd } from 'lucide-react'
+import { PiggyBank } from 'lucide-react'
+import { Command } from 'lucide-react'
 import { type SidebarData } from '../types'
 
 export const sidebarData: SidebarData = {
   user: {
-    name: 'satnaing',
-    email: 'satnaingdev@gmail.com',
+    name: 'Admin',
+    email: 'admin@ajo360.com',
     avatar: '/avatars/shadcn.jpg',
   },
   teams: [
     {
       name: 'Ajo360',
       logo: Command,
-      plan: ''
-    },
-    {
-      name: 'Acme Inc',
-      logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup',
+      plan: '',
     },
   ],
   navGroups: [
@@ -50,30 +41,49 @@ export const sidebarData: SidebarData = {
       title: 'General',
       items: [
         {
-          title: 'Accounting',
+          title: 'Dashboard',
           url: '/',
           icon: IconLayoutDashboard,
         },
         {
-          title: 'Wallets',
-          url: '/wallets',
-          icon: IconChecklist,
-        },
-        {
-          title: 'Savings Plan',
-          url: '/savings-plan',
-          icon: IconPackages,
-        },
-        // {
-        //   title: 'Chats',
-        //   url: '/chats',
-        //   badge: '3',
-        //   icon: IconMessages,
-        // },
-        {
           title: 'Users',
           url: '/users',
           icon: IconUsers,
+        },
+        {
+          title: 'Transactions',
+          url: '/transactions',
+          icon: IconCreditCard,
+        },
+        {
+          title: 'Wallets',
+          url: '/wallets',
+          icon: IconWallet,
+        },
+        {
+          title: 'Wallet Requests',
+          url: '/wallet-requests',
+          icon: IconWallet,
+        },
+      ],
+    },
+    {
+      title: 'Management',
+      items: [
+        {
+          title: 'Manage Savings',
+          url: '/savings',
+          icon: PiggyBank,
+        },
+      ],
+    },
+    {
+      title: 'Support',
+      items: [
+        {
+          title: 'Help Center',
+          url: '/help-center',
+          icon: IconHelp,
         },
       ],
     },
@@ -86,65 +96,65 @@ export const sidebarData: SidebarData = {
     //      icon: IconUsers,
     //    },
     //  ]
-      // items: [
-      //   {
-      //     title: 'Auth',
-      //     icon: IconLockAccess,
-      //     items: [
-      //       {
-      //         title: 'Sign In',
-      //         url: '/sign-in',
-      //       },
-      //       {
-      //         title: 'Sign In (2 Col)',
-      //         url: '/sign-in-2',
-      //       },
-      //       {
-      //         title: 'Sign Up',
-      //         url: '/sign-up',
-      //       },
-      //       {
-      //         title: 'Forgot Password',
-      //         url: '/forgot-password',
-      //       },
-      //       {
-      //         title: 'OTP',
-      //         url: '/otp',
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     title: 'Errors',
-      //     icon: IconBug,
-      //     items: [
-      //       {
-      //         title: 'Unauthorized',
-      //         url: '/401',
-      //         icon: IconLock,
-      //       },
-      //       {
-      //         title: 'Forbidden',
-      //         url: '/403',
-      //         icon: IconUserOff,
-      //       },
-      //       {
-      //         title: 'Not Found',
-      //         url: '/404',
-      //         icon: IconError404,
-      //       },
-      //       {
-      //         title: 'Internal Server Error',
-      //         url: '/500',
-      //         icon: IconServerOff,
-      //       },
-      //       {
-      //         title: 'Maintenance Error',
-      //         url: '/503',
-      //         icon: IconBarrierBlock,
-      //       },
-      //     ],
-      //   },
-      // ],
+    // items: [
+    //   {
+    //     title: 'Auth',
+    //     icon: IconLockAccess,
+    //     items: [
+    //       {
+    //         title: 'Sign In',
+    //         url: '/sign-in',
+    //       },
+    //       {
+    //         title: 'Sign In (2 Col)',
+    //         url: '/sign-in-2',
+    //       },
+    //       {
+    //         title: 'Sign Up',
+    //         url: '/sign-up',
+    //       },
+    //       {
+    //         title: 'Forgot Password',
+    //         url: '/forgot-password',
+    //       },
+    //       {
+    //         title: 'OTP',
+    //         url: '/otp',
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     title: 'Errors',
+    //     icon: IconBug,
+    //     items: [
+    //       {
+    //         title: 'Unauthorized',
+    //         url: '/401',
+    //         icon: IconLock,
+    //       },
+    //       {
+    //         title: 'Forbidden',
+    //         url: '/403',
+    //         icon: IconUserOff,
+    //       },
+    //       {
+    //         title: 'Not Found',
+    //         url: '/404',
+    //         icon: IconError404,
+    //       },
+    //       {
+    //         title: 'Internal Server Error',
+    //         url: '/500',
+    //         icon: IconServerOff,
+    //       },
+    //       {
+    //         title: 'Maintenance Error',
+    //         url: '/503',
+    //         icon: IconBarrierBlock,
+    //       },
+    //     ],
+    //   },
+    // ],
     // },
     // {
     //   title: 'Other',

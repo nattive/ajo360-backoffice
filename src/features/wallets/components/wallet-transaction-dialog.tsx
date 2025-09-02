@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import axios from '@/lib/axios'
+import React, { useState, useMemo } from 'react'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
@@ -8,28 +7,12 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+import { Loader2 } from 'lucide-react'
 
-interface Transaction {
-  createdAt: string
-  id: string
-  amount: number
-  date: string
-  type: string // 'credit' or 'debit'
-  status: string
-  narration?: string
-}
+import { TransactionType } from '@/schemas/adminSchemas'
+import { formatCurrency, formatTransactionAmount } from '@/lib/currency'
 
-interface Wallet {
-  id: string
-  accountName: string
-  userId: string
-  availableBalance: string
-  createdAt: string
-  updatedAt: string
-  isLocked: boolean
-  status: string
-  transactions?: Transaction[]
-}
+
 
 interface ViewTransactionsDialogProps {
   isOpen: boolean
@@ -40,57 +23,33 @@ interface ViewTransactionsDialogProps {
 export function ViewTransactionsDialog({
   isOpen,
   onClose,
-  walletId,
+  walletId: _walletId,
 }: ViewTransactionsDialogProps) {
-  const [wallets, setWallets] = useState<Wallet[]>([])
   const [search, setSearch] = useState('')
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<string | null>(null)
 
-  const selectedWallet = wallets.find((w) => w.id === walletId)
-  const userId = selectedWallet?.userId
-  const userWallets = wallets.filter((w) => w.userId === userId)
+  // Wallet transactions endpoint removed - no longer available
+  const transactions: TransactionType[] = []
+  const loading = false
+  const error = null
 
-  const combinedTransactions: Transaction[] = userWallets
-    .flatMap((w) => w.transactions ?? [])
-    .sort(
-      (a, b) =>
-        new Date(b.date || b.createdAt || '').getTime() -
-        new Date(a.date || a.createdAt || '').getTime()
+  // Filter and sort transactions
+  const filteredTransactions = useMemo(() => {
+    const filtered = transactions.filter((txn: TransactionType) => {
+      const query = search.toLowerCase()
+      return (
+        txn.type.toLowerCase().includes(query) ||
+        txn.status.toLowerCase().includes(query) ||
+        txn.description?.toLowerCase().includes(query)
+      )
+    })
+
+    return filtered.sort(
+      (a: TransactionType, b: TransactionType) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     )
+  }, [transactions, search])
 
-  const filteredTransactions = combinedTransactions.filter((txn) => {
-    const query = search.toLowerCase()
-    return (
-      txn.type.toLowerCase().includes(query) ||
-      txn.status.toLowerCase().includes(query) ||
-      txn.narration?.toLowerCase().includes(query)
-    )
-  })
-
-  useEffect(() => {
-    if (!isOpen) return
-
-    const fetchWallets = async () => {
-      setLoading(true)
-      try {
-        const response = await axios.get(
-          'https://api.myajo360.com/wallets/all-wallets'
-        )
-        setWallets(response.data?.wallets || response.data || [])
-        setError(null)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (err: any) {
-        setError('Failed to fetch wallets')
-        // eslint-disable-next-line no-console
-        console.error(err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchWallets()
-  }, [isOpen])
+  const selectedWallet = transactions[0]?.wallet // Assuming wallet info comes with transactions
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -112,7 +71,7 @@ export function ViewTransactionsDialog({
                 Current Balance
               </div>
               <div className='text-4xl font-black tracking-wide text-gray-800'>
-                ₦{Number(selectedWallet.availableBalance).toLocaleString()}
+                {formatCurrency(selectedWallet?.balance || 0)}
               </div>
             </div>
           )}
@@ -131,17 +90,17 @@ export function ViewTransactionsDialog({
         {/* 📃 Transactions List */}
         <div className='mt-4 px-6'>
           {loading ? (
-            <p className='animate-pulse text-sm text-gray-500'>
-              Loading transactions...
-            </p>
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
           ) : error ? (
-            <p className='text-sm text-red-600'>{error}</p>
+            <p className='text-sm text-red-600'>Failed to load transactions. Please try again.</p>
           ) : filteredTransactions.length > 0 ? (
             <ScrollArea className='h-[58vh] pr-2'>
               <div className='space-y-4 pb-4'>
-                {filteredTransactions.map((txn) => {
+                {filteredTransactions.map((txn: TransactionType) => {
                   const isCredit = txn.type.toLowerCase() === 'credit'
-                  const txnDate = new Date(txn.date || txn.createdAt || '')
+                  const txnDate = new Date(txn.createdAt)
                   const day = txnDate.getDate()
                   const month = txnDate.toLocaleString('default', {
                     month: 'short',
@@ -175,16 +134,15 @@ export function ViewTransactionsDialog({
                               isCredit ? 'text-green-600' : 'text-red-600'
                             }`}
                           >
-                            {isCredit ? '+' : '-'}₦
-                            {Math.abs(Number(txn.amount)).toLocaleString()}
+                            {formatTransactionAmount(Math.abs(Number(txn.amount)), isCredit ? 'credit' : 'debit')}
                           </div>
                         </div>
                         <div className='text-xs text-gray-400'>
                           Status: {txn.status}
                         </div>
-                        {txn.narration && (
+                        {txn.description && (
                           <div className='mt-1 text-xs text-gray-500 italic'>
-                            {txn.narration}
+                            {txn.description}
                           </div>
                         )}
                       </div>

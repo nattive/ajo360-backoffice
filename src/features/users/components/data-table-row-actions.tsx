@@ -6,7 +6,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useUsers } from '../context/users-context';
-import { User, userSchema } from '../data/schema';
+import { User } from '../data/schema';
 
 
 interface DataTableRowActionsProps {
@@ -15,7 +15,7 @@ interface DataTableRowActionsProps {
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
 
-  const user = userSchema?.parse(row.original);
+  const user = row.original;
 
   const { setOpen, setCurrentRow } = useUsers()
   return (

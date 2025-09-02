@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { showSubmittedData } from '@/utils/show-submitted-data'
-import { useCreateSavings, useUpdateSavings } from '@/hooks/api-hooks/useSaving'
+import { useCreateSaving, useUpdateSaving } from '@/hooks/api-hooks/useSaving'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -56,9 +56,9 @@ type SavingsForm = z.infer<typeof formSchema>
 export function SavingsMutateDrawer({ open, onOpenChange, currentRow }: Props) {
   const isUpdate = !!currentRow
   const { mutate: createSavings, isPending: isCreatLoading } =
-    useCreateSavings()
+    useCreateSaving()
   const { mutate: updateSavingsMutation, isPending: isUpdateLoading } =
-    useUpdateSavings()
+    useUpdateSaving()
 
   const form = useForm<SavingsForm>({
     resolver: zodResolver(formSchema),
@@ -98,7 +98,7 @@ export function SavingsMutateDrawer({ open, onOpenChange, currentRow }: Props) {
     if (isUpdate && currentRow && 'id' in currentRow) {
       const { config, ...rest } = data // Remove 'config' for patch
       updateSavingsMutation(
-        { id: currentRow.id, formData: rest },
+        { savingId: currentRow.id, savingData: rest },
         {
           onSuccess: () => {
             onOpenChange(false)
@@ -108,7 +108,26 @@ export function SavingsMutateDrawer({ open, onOpenChange, currentRow }: Props) {
         }
       )
     } else {
-      createSavings(data, {
+      const formData = {
+        ...data,
+        description: data.description || '',
+        config: {
+          interest_rate: data.config.interest_rate.toString(),
+          minimum_days: data.config.minimum_days,
+          maximum_days: data.config.maximum_days,
+          interest_style: 'simple' as const,
+          allow_break: data.config.allow_break,
+          minimum_percentage_amount: 0,
+          user_can_auto_save: false,
+          break_penalty: data.config.break_penalty.toString(),
+          allow_interest_withdrawal: data.config.allow_interest_withdrawal,
+          use_main_wallet_balance: false,
+          is_group_savings: false,
+          keep_interest_on_break: false,
+          keep_interest_record: true
+        }
+      }
+      createSavings(formData, {
         onSuccess: () => {
           onOpenChange(false)
           form.reset()

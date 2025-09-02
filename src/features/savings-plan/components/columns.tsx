@@ -57,14 +57,14 @@ export const columns: ColumnDef<SavingsPlan>[] = [
     header: 'Interest Rate',
     cell: ({ row }) => (
       <div className='text-primary font-medium'>
-        {row.original.config.interest_rate}%
+        {row.original.config?.interest_rate || 0}%
       </div>
     ),
   },
   /* {
     header: 'Duration (days)',
     cell: ({ row }) => {
-      const { minimum_days, maximum_days } = row.original.config
+      const { minimum_days, maximum_days } = row.original.config || {}
       return (
         <div className='text-sm'>
           {minimum_days} - {maximum_days}
@@ -93,7 +93,7 @@ export const columns: ColumnDef<SavingsPlan>[] = [
     header: 'Interest Style',
     cell: ({ row }) => (
       <Badge className='text-xs capitalize'>
-        {row.original.config.interest_style}
+        {row.original.config?.interest_style || 'N/A'}
       </Badge>
     ),
   },
@@ -102,9 +102,9 @@ export const columns: ColumnDef<SavingsPlan>[] = [
     cell: ({ row }) => (
       <Badge
         variant='outline'
-        className={`text-xs ${row.original.config.user_can_auto_save ? 'border-green-500 bg-green-50 text-green-600' : 'border-gray-400 text-gray-600'}`}
+        className={`text-xs ${row.original.config?.user_can_auto_save ? 'border-green-500 bg-green-50 text-green-600' : 'border-gray-400 text-gray-600'}`}
       >
-        {row.original.config.user_can_auto_save ? 'Yes' : 'No'}
+        {row.original.config?.user_can_auto_save ? 'Yes' : 'No'}
       </Badge>
     ),
   },

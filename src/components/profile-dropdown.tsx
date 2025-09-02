@@ -1,4 +1,5 @@
 import { useAuth } from '@/stores/authStore'
+import { useAdminLogout } from '@/hooks/api-hooks/useAdmin'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,10 +11,11 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 export function ProfileDropdown() {
-  const { user, reset } = useAuth()
+  const { admin } = useAuth()
+  const { mutate: logout } = useAdminLogout()
 
-  const displayName = user?.email?.split('@')[0] || 'User'
-  const email = user?.email || 'user@example.com'
+  const displayName = admin?.email?.split('@')[0] || 'Admin'
+  const email = admin?.email || 'admin@example.com'
   const initials = displayName
     .split(' ')
     .map((n) => n[0])
@@ -21,9 +23,7 @@ export function ProfileDropdown() {
     .toUpperCase()
 
   const handleLogout = () => {
-    reset()
-    // Optionally redirect to login or homepage
-    window.location.href = '/sign-in' // or use a router method
+    logout()
   }
 
   return (

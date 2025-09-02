@@ -2,7 +2,7 @@ import {
   ChevronsUpDown,
   LogOut,
 } from 'lucide-react'
-import { useLogout } from '@/hooks/api-hooks/useAuth'
+import { useAdminLogout } from '@/hooks/api-hooks/useAdmin'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -20,13 +20,13 @@ import { useAuth } from '@/stores/authStore'
 
 export function NavUser() {
   const { isMobile } = useSidebar()
-  const { mutate: logout, isPending: logoutPending } = useLogout()
-  const { user } = useAuth()
+  const { mutate: logout, isPending: logoutPending } = useAdminLogout()
+  const { admin } = useAuth()
 
-  // If user isn't logged in, render nothing or fallback UI
-  if (!user) return null
+  // If admin isn't logged in, render nothing or fallback UI
+  if (!admin) return null
 
-  const displayName = user.email?.split('@')[0] || 'User'
+  const displayName = admin.email?.split('@')[0] || 'Admin'
   const initials = displayName
     .split(' ')
     .map((n) => n[0])
@@ -50,7 +50,7 @@ export function NavUser() {
               </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>
                 <span className='truncate font-semibold'>{displayName}</span>
-                <span className='truncate text-xs'>{user.email}</span>
+                <span className='truncate text-xs'>{admin.email}</span>
               </div>
               <ChevronsUpDown className='ml-auto size-4' />
             </SidebarMenuButton>

@@ -23,15 +23,22 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination } from './data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
+import { GetWalletsParams } from '@/api/wallet-api'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  totalCount?: number
+  params?: GetWalletsParams
+  onParamsChange?: (params: Partial<GetWalletsParams>) => void
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  totalCount = 0,
+  params,
+  onParamsChange,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -40,6 +47,30 @@ export function DataTable<TData, TValue>({
     []
   )
   const [sorting, setSorting] = React.useState<SortingState>([])
+  
+  // Handle server-side filtering
+  React.useEffect(() => {
+    if (onParamsChange && columnFilters.length > 0) {
+      const filterParams: Partial<GetWalletsParams> = {}
+      
+      columnFilters.forEach((filter) => {
+        if (filter.id === 'accountNumber' && filter.value) {
+          filterParams.search = filter.value as string
+        }
+        if (filter.id === 'status' && Array.isArray(filter.value) && filter.value.length > 0) {
+          filterParams.status = filter.value[0] as string
+        }
+        if (filter.id === 'currency' && Array.isArray(filter.value) && filter.value.length > 0) {
+          filterParams.currency = filter.value[0] as string
+        }
+        if (filter.id === 'availableBalance' && filter.value) {
+          filterParams.minBalance = parseFloat(filter.value as string)
+        }
+      })
+      
+      onParamsChange(filterParams)
+    }
+  }, [columnFilters, onParamsChange])
 
   const table = useReactTable({
     data,
@@ -61,6 +92,8 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    manualPagination: !!onParamsChange,
+    pageCount: onParamsChange ? Math.ceil(totalCount / (params?.limit || 20)) : undefined,
   })
 
   return (
@@ -116,7 +149,12 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
+      <DataTablePagination 
+        table={table} 
+        totalCount={totalCount}
+        params={params}
+        onParamsChange={onParamsChange}
+      />
     </div>
   )
 }

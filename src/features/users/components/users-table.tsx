@@ -38,10 +38,31 @@ interface DataTableProps {
   data: User[]
 }
 
+// Global filter function for searching across multiple fields
+const globalFilterFn = (
+  row: { original: User },
+  _columnId: string,
+  value: string
+) => {
+  const searchValue = value.toLowerCase()
+  const firstName = row.original.firstName?.toLowerCase() || ''
+  const lastName = row.original.lastName?.toLowerCase() || ''
+  const email = row.original.email?.toLowerCase() || ''
+  const phoneNumber = row.original.phoneNumber?.toLowerCase() || ''
+
+  return (
+    firstName.includes(searchValue) ||
+    lastName.includes(searchValue) ||
+    email.includes(searchValue) ||
+    phoneNumber.includes(searchValue)
+  )
+}
+
 export function UsersTable({ columns, data }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [globalFilter, setGlobalFilter] = useState<string>('')
   const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
@@ -52,12 +73,16 @@ export function UsersTable({ columns, data }: DataTableProps) {
       columnVisibility,
       rowSelection,
       columnFilters,
+      globalFilter,
     },
     enableRowSelection: true,
+    enableGlobalFilter: true,
+    globalFilterFn,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

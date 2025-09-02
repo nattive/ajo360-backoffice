@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Wallet } from '../data/schema';
 import { DataTableColumnHeader } from './data-table-column-header';
 import { DataTableRowActions } from './data-table-row-actions';
+import { formatCurrency } from '@/lib/currency';
 
 
 export const columns: ColumnDef<Wallet>[] = [
@@ -57,6 +58,9 @@ export const columns: ColumnDef<Wallet>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Currency' />
     ),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
   },
   {
     accessorKey: 'bookedBalance',
@@ -65,7 +69,7 @@ export const columns: ColumnDef<Wallet>[] = [
     ),
     cell: ({ row }) => (
       <div className='text-primary font-medium'>
-        ₦{Number(row.getValue('bookedBalance')).toLocaleString()}
+        {formatCurrency(row.getValue('bookedBalance'))}
       </div>
     ),
   },
@@ -76,9 +80,14 @@ export const columns: ColumnDef<Wallet>[] = [
     ),
     cell: ({ row }) => (
       <div className='text-primary font-medium'>
-        ₦{Number(row.getValue('availableBalance')).toLocaleString()}
+        {formatCurrency(row.getValue('availableBalance'))}
       </div>
     ),
+    filterFn: (row, id, value) => {
+      const balance = parseFloat(row.getValue(id) as string) || 0
+      const minBalance = parseFloat(value) || 0
+      return balance >= minBalance
+    },
   },
   {
     accessorKey: 'status',
@@ -106,6 +115,9 @@ export const columns: ColumnDef<Wallet>[] = [
           {status}
         </Badge>
       )
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
     },
   },
   {

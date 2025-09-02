@@ -110,11 +110,12 @@ export default function Chats() {
             <ScrollArea className='-mx-3 h-full p-3'>
               {filteredChatList.map((chatUsr) => {
                 const { id, profile, username, messages, fullName } = chatUsr
-                const lastConvo = messages[0]
-                const lastMsg =
-                  lastConvo.sender === 'You'
+                const lastConvo = messages?.[0]
+                const lastMsg = lastConvo
+                  ? lastConvo.sender === 'You'
                     ? `You: ${lastConvo.message}`
                     : lastConvo.message
+                  : 'No messages'
                 return (
                   <Fragment key={id}>
                     <button

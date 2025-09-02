@@ -9,6 +9,7 @@ import {
 } from '@/hooks/api-hooks/useAdmin'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { LoadingButton, LoadingWrapper } from '@/components/ui/loading-spinner'
 import {
   Card,
   CardContent,
@@ -33,6 +34,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { formatCurrency } from '@/lib/currency'
 
 export function WithdrawalsManagement() {
   const [statusFilter, setStatusFilter] = useState<
@@ -119,11 +121,10 @@ export function WithdrawalsManagement() {
         </Select>
       </div>
 
-      {isLoading ? (
-        <div className='flex h-64 items-center justify-center'>
-          <div className='text-lg'>Loading withdrawals...</div>
-        </div>
-      ) : (
+      <LoadingWrapper 
+        isLoading={isLoading}
+        fallback={<div className="text-center py-8">Loading withdrawals...</div>}
+      >
         <div className='grid gap-4'>
           {filteredWithdrawals.length === 0 ? (
             <Card>
@@ -155,7 +156,7 @@ export function WithdrawalsManagement() {
                     <div>
                       <h4 className='mb-2 font-medium'>Amount</h4>
                       <p className='text-2xl font-bold'>
-                        ₦{withdrawal.amount.toLocaleString()}
+                        {formatCurrency(withdrawal.amount)}
                       </p>
                     </div>
                     <div>
@@ -233,14 +234,13 @@ export function WithdrawalsManagement() {
                             >
                               Cancel
                             </Button>
-                            <Button
+                            <LoadingButton
                               onClick={handleStatusUpdate}
-                              disabled={updateWithdrawalMutation.isPending}
+                              isLoading={updateWithdrawalMutation.isPending}
+                              loadingText='Approving...'
                             >
-                              {updateWithdrawalMutation.isPending
-                                ? 'Approving...'
-                                : 'Approve'}
-                            </Button>
+                              Approve
+                            </LoadingButton>
                           </DialogFooter>
                         </DialogContent>
                       </Dialog>
@@ -299,17 +299,14 @@ export function WithdrawalsManagement() {
                             >
                               Cancel
                             </Button>
-                            <Button
+                            <LoadingButton
                               onClick={handleStatusUpdate}
-                              disabled={
-                                updateWithdrawalMutation.isPending ||
-                                !reason.trim()
-                              }
+                              isLoading={updateWithdrawalMutation.isPending}
+                              disabled={!reason.trim()}
+                              loadingText='Rejecting...'
                             >
-                              {updateWithdrawalMutation.isPending
-                                ? 'Rejecting...'
-                                : 'Reject'}
-                            </Button>
+                              Reject
+                            </LoadingButton>
                           </DialogFooter>
                         </DialogContent>
                       </Dialog>
@@ -320,7 +317,7 @@ export function WithdrawalsManagement() {
             ))
           )}
         </div>
-      )}
+      </LoadingWrapper>
     </div>
   )
 }

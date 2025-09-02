@@ -1,5 +1,3 @@
-import { Loader2 } from 'lucide-react'
-import { useGetUserWallet } from '@/hooks/api-hooks/useWallet'
 import { Button } from '@/components/ui/button'
 import {
   Sheet,
@@ -14,23 +12,29 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { columns } from './components/columns'
-import { DataTable } from './components/data-table'
 import { AllTransactions } from './components/view-all-transactions'
 import { WalletDialogs } from './components/wallet-dialogs'
 import { WalletPrimaryButtons } from './components/wallet-primary-buttons'
 import { WalletProvider } from './context/wallet-context'
+import { DataTable } from './components/data-table'
+import { columns } from './components/columns'
+import { useGetWallets } from '@/hooks/api-hooks/useWallet'
+import { useState, useCallback } from 'react'
+import { GetWalletsParams } from '@/api/wallet-api'
 
 export default function Wallet() {
-  const { data: wallets, isLoading } = useGetUserWallet()
-
-  if (isLoading) {
-    return (
-      <div className='flex h-screen items-center justify-center'>
-        <Loader2 className='h-6 w-6 animate-spin' />
-      </div>
-    )
-  }
+  const [params, setParams] = useState<GetWalletsParams>({
+    page: 1,
+    limit: 20,
+  })
+  
+  const { data: walletsData, isLoading, error } = useGetWallets(params)
+  const wallets = walletsData?.data || []
+  const totalCount = walletsData?.totalCount || 0
+  
+  const handleParamsChange = useCallback((newParams: Partial<GetWalletsParams>) => {
+    setParams(prev => ({ ...prev, ...newParams }))
+  }, [])
 
   return (
     <WalletProvider>
@@ -43,7 +47,7 @@ export default function Wallet() {
       </Header>
 
       <Main>
-        <div className='mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4'>
+        <div className='mb-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
           <div>
             <h2 className='text-2xl font-bold tracking-tight'>
               Wallet Management
@@ -54,7 +58,7 @@ export default function Wallet() {
             </p>
           </div>
 
-          <div className='flex gap-2'>
+          <div className='flex flex-col gap-2 sm:flex-row'>
             <WalletPrimaryButtons />
             <Sheet>
               <SheetTrigger asChild>
@@ -85,7 +89,23 @@ export default function Wallet() {
         </div>
 
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-          <DataTable data={wallets ?? []} columns={columns} />
+          {isLoading ? (
+            <div className='flex h-64 items-center justify-center text-muted-foreground'>
+              <p>Loading wallets...</p>
+            </div>
+          ) : error ? (
+            <div className='flex h-64 items-center justify-center text-muted-foreground'>
+              <p>Error loading wallets: {error.message}</p>
+            </div>
+          ) : (
+            <DataTable 
+              columns={columns} 
+              data={wallets} 
+              totalCount={totalCount}
+              params={params}
+              onParamsChange={handleParamsChange}
+            />
+          )}
         </div>
       </Main>
 

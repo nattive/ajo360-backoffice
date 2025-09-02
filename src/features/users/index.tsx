@@ -1,5 +1,5 @@
-import { Loader2 } from 'lucide-react'
-import { useGetUsers } from '@/hooks/api-hooks/useAuth'
+import { useGetAllUsers } from '@/hooks/api-hooks/useAdmin'
+import { LoadingWrapper } from '@/components/ui/loading-spinner'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -11,15 +11,10 @@ import { UsersTable } from './components/users-table'
 import UsersProvider from './context/users-context'
 
 export default function Users() {
-  const { data: users, isLoading } = useGetUsers()
+  const { data: usersResponse, isLoading } = useGetAllUsers()
 
-  if (isLoading) {
-    return (
-      <div className='flex h-screen items-center justify-center'>
-        <Loader2 className='h-6 w-6 animate-spin' />
-      </div>
-    )
-  }
+  // Extract the users array from the API response
+  const users = usersResponse?.data ?? []
 
   return (
     <UsersProvider>
@@ -32,7 +27,7 @@ export default function Users() {
       </Header>
 
       <Main>
-        <div className='mb-2 flex flex-wrap items-center justify-between space-y-2'>
+        <div className='mb-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
           <div>
             <h2 className='text-2xl font-bold tracking-tight'>User List</h2>
             <p className='text-muted-foreground'>
@@ -41,7 +36,12 @@ export default function Users() {
           </div>
         </div>
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-          <UsersTable data={users ?? []} columns={columns} />
+          <LoadingWrapper
+            isLoading={isLoading}
+            fallback={<div className='py-8 text-center'>Loading users...</div>}
+          >
+            <UsersTable data={users || []} columns={columns} />
+          </LoadingWrapper>
         </div>
       </Main>
       <UsersDialogs />

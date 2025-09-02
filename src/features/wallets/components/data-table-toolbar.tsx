@@ -3,10 +3,37 @@ import { Table } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { DataTableViewOptions } from './data-table-view-options'
+import { DataTableFacetedFilter } from './data-table-faceted-filter'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
 }
+
+const statuses = [
+  {
+    value: 'ACTIVE',
+    label: 'Active',
+  },
+  {
+    value: 'INACTIVE',
+    label: 'Inactive',
+  },
+  {
+    value: 'LOCKED',
+    label: 'Locked',
+  },
+  {
+    value: 'SUSPENDED',
+    label: 'Suspended',
+  },
+]
+
+const currencies = [
+  {
+    value: 'NGN',
+    label: 'NGN',
+  },
+]
 
 export function DataTableToolbar<TData>({
   table,
@@ -17,7 +44,7 @@ export function DataTableToolbar<TData>({
     <div className='flex items-center justify-between'>
       <div className='flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2'>
         <Input
-          placeholder='Filter tasks...'
+          placeholder='Search wallets...'
           value={
             (table.getColumn('accountNumber')?.getFilterValue() as string) ?? ''
           }
@@ -25,6 +52,45 @@ export function DataTableToolbar<TData>({
             table.getColumn('accountNumber')?.setFilterValue(event.target.value)
           }
           className='h-8 w-[150px] lg:w-[250px]'
+        />
+        
+        <Input
+          placeholder='Search by account name...'
+          value={
+            (table.getColumn('accountName')?.getFilterValue() as string) ?? ''
+          }
+          onChange={(event) =>
+            table.getColumn('accountName')?.setFilterValue(event.target.value)
+          }
+          className='h-8 w-[150px] lg:w-[200px]'
+        />
+        
+        {table.getColumn('status') && (
+          <DataTableFacetedFilter
+            column={table.getColumn('status')}
+            title='Status'
+            options={statuses}
+          />
+        )}
+        
+        {table.getColumn('currency') && (
+          <DataTableFacetedFilter
+            column={table.getColumn('currency')}
+            title='Currency'
+            options={currencies}
+          />
+        )}
+        
+        <Input
+          placeholder='Min balance...'
+          value={
+            (table.getColumn('availableBalance')?.getFilterValue() as string) ?? ''
+          }
+          onChange={(event) =>
+            table.getColumn('availableBalance')?.setFilterValue(event.target.value)
+          }
+          className='h-8 w-[120px] lg:w-[150px]'
+          type='number'
         />
 
         {isFiltered && (

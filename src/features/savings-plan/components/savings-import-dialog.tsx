@@ -50,11 +50,13 @@ export function SavingsImportDialog({ open, onOpenChange }: Props) {
   const onSubmit = () => {
     const file = form.getValues('file')
 
-    if (file && file[0]) {
+    const firstFile = file?.[0]
+
+    if (firstFile) {
       const fileDetails = {
-        name: file[0].name,
-        size: file[0].size,
-        type: file[0].type,
+        name: firstFile.name,
+        size: firstFile.size,
+        type: firstFile.type,
       }
       showSubmittedData(fileDetails, 'You have imported the following file:')
     }

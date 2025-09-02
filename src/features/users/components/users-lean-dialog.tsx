@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { IconAlertTriangle } from '@tabler/icons-react'
-import { showSubmittedData } from '@/utils/show-submitted-data'
+import { useUpdateUserStatus } from '@/hooks/api-hooks/useAdmin'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -20,20 +20,19 @@ export function UsersLeanDialog({ open, onOpenChange, currentRow }: Props) {
   const [reason, setReason] = useState('')
   const [amount, setAmount] = useState('')
   const [username, setUsername] = useState('')
+  const updateUserStatus = useUpdateUserStatus()
 
   const handleLean = () => {
     if (username.trim() !== currentRow.email) return
 
+    updateUserStatus.mutate({
+      userId: currentRow.id,
+      statusData: {
+        status: 'suspended',
+        reason: `User placed on LEAN - Reason: ${reason}, Amount: ${amount}`
+      }
+    })
     onOpenChange(false)
-    showSubmittedData(
-      {
-        ...currentRow,
-        reason,
-        amount,
-        username,
-      },
-      'The following user has been placed on LEAN:'
-    )
   }
 
   return (
